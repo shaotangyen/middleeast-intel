@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>中東戰況情報中心：2026年伊朗戰爭</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Oswald:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -183,7 +184,11 @@
     margin-bottom: 6px; border-radius: 1px;
   }
   .news-title { font-size: 15px; line-height: 1.6; color: var(--text-bright); margin-bottom: 5px; font-weight: 500; }
-  .news-summary { font-size: 12px; color: var(--text-dim); line-height: 1.7; margin-bottom: 7px; }
+  .news-summary {
+    font-size: 12px; color: var(--text-dim); line-height: 1.7; margin-bottom: 7px;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+    overflow: hidden; text-overflow: ellipsis;
+  }
   .news-meta { display: flex; align-items: center; gap: 8px; }
   .news-time { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); }
   .news-source {
@@ -218,7 +223,7 @@
   }
   .map-container {
     flex: 1; position: relative; overflow: hidden;
-    background: #08111c;
+    background: #08111c; min-height: 0;
   }
   .map-svg {
     width: 100%; height: 100%;
@@ -479,7 +484,7 @@
 
   /* CONFLICT POPUP */
   .conflict-popup {
-    position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);
+    position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%);
     background: rgba(6,10,15,0.97); border: 1px solid var(--accent);
     padding: 16px 20px; min-width: 280px; max-width: 360px;
     backdrop-filter: blur(16px); z-index: 50; border-radius: 2px;
@@ -512,8 +517,7 @@
   .country-filter .filter-btn { font-size: 10px; padding: 7px 10px; white-space: nowrap; flex-shrink: 0; }
   .country-filter .filter-btn.active { color: var(--accent2); border-bottom-color: var(--accent2); }
 
-  /* MAP WAR ICONS OVERLAY */
-  .map-war-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+  /* MAP WAR ICONS OVERLAY - used by Leaflet DivIcon */
   .war-icon {
     position: absolute; pointer-events: all; cursor: pointer;
     transform: translate(-50%, -50%);
@@ -665,7 +669,7 @@
     .pin-badge { font-size: 8px; padding: 3px 6px; }
     .conflict-popup {
       min-width: unset; left: 10px; right: 10px;
-      width: auto; transform: none; bottom: 44px;
+      width: auto; transform: none; bottom: 70px;
     }
     .airport-item { padding: 10px 14px; }
     .airspace-item { padding: 10px 14px; }
@@ -780,74 +784,15 @@
 
         <!-- Quick-jump buttons -->
         <div class="map-layers" id="mapJumpBtns">
-          <button class="layer-btn active" onclick="jumpMap('middle_east')">中東總覽</button>
-          <button class="layer-btn" onclick="jumpMap('iran')">🇮🇷 伊朗</button>
-          <button class="layer-btn" onclick="jumpMap('israel')">🇮🇱 以色列</button>
-          <button class="layer-btn" onclick="jumpMap('gaza')">加薩</button>
-          <button class="layer-btn" onclick="jumpMap('yemen')">葉門</button>
+          <button class="layer-btn active" onclick="jumpMap('middle_east',this)">中東總覽</button>
+          <button class="layer-btn" onclick="jumpMap('iran',this)">🇮🇷 伊朗</button>
+          <button class="layer-btn" onclick="jumpMap('israel',this)">🇮🇱 以色列</button>
+          <button class="layer-btn" onclick="jumpMap('gaza',this)">加薩</button>
+          <button class="layer-btn" onclick="jumpMap('yemen',this)">葉門</button>
         </div>
 
-        <!-- Google Maps embed iframe -->
-        <iframe
-          id="googleMapFrame"
-          src="https://maps.google.com/maps?q=Middle+East&t=m&z=5&ie=UTF8&iwloc=&output=embed&ll=30,42&z=5"
-          style="width:100%;height:100%;border:0;display:block;filter:invert(0.9) hue-rotate(180deg) saturate(0.7) brightness(0.85);"
-          allowfullscreen=""
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-          title="中東地圖">
-        </iframe>
-
-
-        <!-- WAR ICONS OVERLAY - fixed positions calibrated to Middle East map -->
-        <div class="map-war-overlay" id="warOverlay">
-          <!-- LV5: Israel-Iran direct war -->
-          <div class="war-icon war-lv5" style="top:46%;left:50%" onclick="showConflictPanel('iran_israel')" title="以色列-伊朗戰爭">
-            <div class="war-marker">💥</div>
-            <div class="war-label">🇮🇱✕🇮🇷</div>
-          </div>
-          <!-- LV5: Gaza -->
-          <div class="war-icon war-lv5" style="top:50%;left:47%" onclick="showConflictPanel('gaza')" title="加薩衝突">
-            <div class="war-marker">⚔️</div>
-            <div class="war-label">加薩</div>
-          </div>
-          <!-- LV4: Iran nuclear sites (Natanz) -->
-          <div class="war-icon war-lv4" style="top:40%;left:56%" onclick="showConflictPanel('iran_nuclear')" title="伊朗核設施">
-            <div class="war-marker">☢️</div>
-            <div class="war-label">核設施</div>
-          </div>
-          <!-- LV4: Yemen/Houthi -->
-          <div class="war-icon war-lv4" style="top:68%;left:51%" onclick="showConflictPanel('houthi')" title="葉門胡塞">
-            <div class="war-marker">🚀</div>
-            <div class="war-label">葉門</div>
-          </div>
-          <!-- LV3: Lebanon Hezbollah -->
-          <div class="war-icon war-lv3" style="top:44%;left:47.5%" onclick="showConflictPanel('lebanon_south')" title="黎巴嫩真主黨">
-            <div class="war-marker">⚠️</div>
-            <div class="war-label">黎巴嫩</div>
-          </div>
-          <!-- LV3: Iraq militia -->
-          <div class="war-icon war-lv3" style="top:38%;left:54%" onclick="showConflictPanel('iraq')" title="伊拉克民兵">
-            <div class="war-marker">💣</div>
-            <div class="war-label">伊拉克</div>
-          </div>
-          <!-- LV2: Syria -->
-          <div class="war-icon war-lv2" style="top:36%;left:50%" onclick="showConflictPanel('syria_north')" title="敘利亞">
-            <div class="war-marker">🔥</div>
-            <div class="war-label">敘利亞</div>
-          </div>
-          <!-- LV2: Sudan -->
-          <div class="war-icon war-lv2" style="top:72%;left:47%" onclick="showConflictPanel('sudan')" title="蘇丹內戰">
-            <div class="war-marker">🔥</div>
-            <div class="war-label">蘇丹</div>
-          </div>
-        </div>
-
-        <!-- Conflict info popup (map overlay) -->
-        <div class="conflict-popup" id="conflictPopup" style="display:none">
-          <button class="popup-close" onclick="document.getElementById('conflictPopup').style.display='none'">✕</button>
-          <div id="conflictPopupContent"></div>
-        </div>
+        <!-- Leaflet Map -->
+        <div id="leafletMap" style="width:100%;height:100%;"></div>
 
         <!-- Legend -->
         <div class="map-legend">
@@ -861,6 +806,12 @@
       </div>
 
 
+    </div>
+
+    <!-- Conflict info popup (floating over map) -->
+    <div class="conflict-popup" id="conflictPopup" style="display:none">
+      <button class="popup-close" onclick="document.getElementById('conflictPopup').style.display='none'">✕</button>
+      <div id="conflictPopupContent"></div>
     </div>
 
     <!-- RIGHT PANEL -->
@@ -1276,24 +1227,119 @@ renderNews();
 
 
 
-// ====== GOOGLE MAP JUMP ======
-const mapSrcs = {
-  middle_east: 'https://maps.google.com/maps?q=Middle+East&t=m&z=5&ie=UTF8&output=embed&ll=29,42&z=5',
-  gaza: 'https://maps.google.com/maps?q=Gaza+Strip&t=m&z=11&ie=UTF8&output=embed',
-  yemen: 'https://maps.google.com/maps?q=Yemen&t=m&z=7&ie=UTF8&output=embed',
-  syria: 'https://maps.google.com/maps?q=Syria&t=m&z=7&ie=UTF8&output=embed',
-  sudan: 'https://maps.google.com/maps?q=Sudan&t=m&z=6&ie=UTF8&output=embed',
-  lebanon: 'https://maps.google.com/maps?q=Lebanon&t=m&z=9&ie=UTF8&output=embed',
-  iraq: 'https://maps.google.com/maps?q=Iraq&t=m&z=7&ie=UTF8&output=embed',
-  saudi: 'https://maps.google.com/maps?q=Saudi+Arabia&t=m&z=5&ie=UTF8&output=embed',
-  iran: 'https://maps.google.com/maps?q=Iran&t=m&z=6&ie=UTF8&output=embed',
-  israel: 'https://maps.google.com/maps?q=Israel&t=m&z=8&ie=UTF8&output=embed',
+// ====== LEAFLET MAP ======
+(function() {
+  // Load Leaflet JS dynamically
+  const script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+  script.onload = initLeaflet;
+  document.head.appendChild(script);
+})();
+
+let leafletMap = null;
+
+const mapViews = {
+  middle_east: { lat: 28, lng: 43, zoom: 5 },
+  iran:        { lat: 33, lng: 54, zoom: 6 },
+  israel:      { lat: 31.5, lng: 35, zoom: 8 },
+  gaza:        { lat: 31.4, lng: 34.35, zoom: 11 },
+  yemen:       { lat: 15.5, lng: 47, zoom: 6 },
+  lebanon:     { lat: 33.9, lng: 35.9, zoom: 9 },
+  syria:       { lat: 35, lng: 38, zoom: 7 },
+  iraq:        { lat: 33, lng: 44, zoom: 7 },
+  sudan:       { lat: 15.6, lng: 32.5, zoom: 6 },
 };
-function jumpMap(place) {
-  document.getElementById('googleMapFrame').src = mapSrcs[place] || mapSrcs.middle_east;
+
+// War hotspots: [lat, lng, level (2-5), emoji, label, conflictId]
+const warSpots = [
+  [31.9, 35.2,  5, '💥', '🇮🇱✕🇮🇷',  'iran_israel'],
+  [31.4, 34.35, 5, '⚔️', '加薩',        'gaza'],
+  [33.7, 51.7,  4, '☢️', '核設施',      'iran_nuclear'],
+  [15.4, 44.2,  4, '🚀', '葉門',        'houthi'],
+  [33.3, 35.5,  3, '⚠️', '黎巴嫩',     'lebanon_south'],
+  [33.3, 44.4,  3, '💣', '伊拉克',     'iraq'],
+  [35.0, 38.0,  2, '🔥', '敘利亞',     'syria_north'],
+  [15.6, 32.5,  2, '🔥', '蘇丹',       'sudan'],
+];
+
+const levelColors = { 5: '#ff2020', 4: '#e8371b', 3: '#f5a623', 2: '#888899' };
+const levelShadow = { 5: 'rgba(255,32,32,', 4: 'rgba(232,55,27,', 3: 'rgba(245,166,35,', 2: 'rgba(136,136,153,' };
+
+function initLeaflet() {
+  const mapEl = document.getElementById('leafletMap');
+  if (!mapEl) return;
+
+  leafletMap = L.map('leafletMap', {
+    center: [28, 43],
+    zoom: 5,
+    zoomControl: false,
+    attributionControl: false,
+  });
+
+  // CartoDB Dark Matter — dark, clean military look
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    maxZoom: 18,
+    subdomains: 'abcd',
+  }).addTo(leafletMap);
+
+  // Custom attribution bottom-right
+  L.control.attribution({ position: 'bottomright', prefix: false })
+    .addTo(leafletMap)
+    .setPrefix('<span style="color:#334;font-size:9px">© CartoDB · OSM</span>');
+
+  // Custom zoom control
+  L.control.zoom({ position: 'bottomright' }).addTo(leafletMap);
+
+  // Add war markers
+  warSpots.forEach(([lat, lng, lv, emoji, label, cid]) => {
+    const color = levelColors[lv] || '#888';
+    const shadow = levelShadow[lv] || 'rgba(136,136,153,';
+    const size = lv >= 5 ? 40 : lv === 4 ? 34 : lv === 3 ? 30 : 26;
+    const pulse = lv >= 4;
+
+    const html = `
+      <div style="
+        width:${size}px;height:${size}px;border-radius:50%;
+        background:${shadow}0.25);border:2px solid ${color};
+        display:flex;align-items:center;justify-content:center;
+        font-size:${size*0.45}px;cursor:pointer;position:relative;
+        box-shadow:0 0 ${lv*4}px ${shadow}0.5);
+        ${pulse ? `animation:warpulse${lv} ${lv>=5?'1.4':'2'}s ease-out infinite;` : ''}
+      ">
+        ${emoji}
+        <div style="
+          position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);
+          background:${shadow}0.7);border:1px solid ${color};
+          color:${color};font-size:9px;padding:1px 5px;border-radius:2px;
+          white-space:nowrap;font-family:'Oswald',sans-serif;letter-spacing:1px;
+          pointer-events:none;
+        ">${label}</div>
+      </div>`;
+
+    const icon = L.divIcon({ html, className: '', iconSize: [size, size+18], iconAnchor: [size/2, size/2] });
+    const marker = L.marker([lat, lng], { icon, zIndexOffset: lv * 100 }).addTo(leafletMap);
+    marker.on('click', () => showConflictPanel(cid));
+  });
+
+  // Inject pulse keyframes
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes warpulse5 { 0%{box-shadow:0 0 0 0 rgba(255,32,32,0.7)} 70%{box-shadow:0 0 0 16px rgba(255,32,32,0)} 100%{box-shadow:0 0 0 0 rgba(255,32,32,0)} }
+    @keyframes warpulse4 { 0%{box-shadow:0 0 0 0 rgba(232,55,27,0.6)} 70%{box-shadow:0 0 0 12px rgba(232,55,27,0)} 100%{box-shadow:0 0 0 0 rgba(232,55,27,0)} }
+    #leafletMap .leaflet-marker-icon { transition: transform 0.15s; }
+    #leafletMap .leaflet-marker-icon:hover { transform: scale(1.2) !important; }
+    #leafletMap .leaflet-control-attribution { background: rgba(6,10,15,0.7) !important; }
+    #leafletMap .leaflet-control-zoom a { background: rgba(13,21,32,0.9) !important; color: #d4dde8 !important; border-color: #1e3048 !important; }
+    #leafletMap .leaflet-control-zoom a:hover { background: #1e3048 !important; color: white !important; }
+  `;
+  document.head.appendChild(style);
+}
+
+function jumpMap(place, btn) {
+  const v = mapViews[place] || mapViews.middle_east;
+  if (leafletMap) leafletMap.flyTo([v.lat, v.lng], v.zoom, { duration: 0.8 });
   document.querySelectorAll('#mapJumpBtns .layer-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
-  document.getElementById('conflictPopup').style.display = 'none';
+  if (btn) btn.classList.add('active');
 }
 
 // ====== CONFLICT POPUP ======
@@ -1315,14 +1361,15 @@ function showConflictPanel(id) {
 
 function highlightOnMap(region) {
   const regionMap = {
-    '加薩': 'israel', '以色列': 'israel', '黎巴嫩': 'lebanon',
+    '加薩': 'gaza', '以色列': 'israel', '黎巴嫩': 'lebanon',
     '敘利亞': 'syria', '伊拉克': 'iraq', '葉門': 'yemen',
-    '蘇丹': 'sudan', '約旦': 'middle_east', '伊朗': 'iran', '阿聯酋': 'gulf', '沙烏地': 'saudi',
+    '蘇丹': 'sudan', '約旦': 'middle_east', '伊朗': 'iran',
+    '阿聯酋': 'middle_east', '沙烏地': 'middle_east',
   };
-  const target = regionMap[region];
-  if (target) {
-    document.getElementById('googleMapFrame').src = mapSrcs[target];
-    document.querySelectorAll('#mapJumpBtns .layer-btn').forEach(b => b.classList.remove('active'));
+  const place = regionMap[region];
+  if (place) {
+    const v = mapViews[place] || mapViews.middle_east;
+    if (leafletMap) leafletMap.flyTo([v.lat, v.lng], v.zoom, { duration: 0.8 });
   }
 }
 
