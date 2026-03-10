@@ -592,30 +592,35 @@
   .leaflet-control-zoom a:hover { background: #121d2e !important; color: #00c8ff !important; }
 
   /* ── CONFLICT MARKERS ── */
-  .lf-marker {
-    display: flex; align-items: center; gap: 6px;
-    padding: 4px 10px 4px 6px;
-    border-radius: 3px;
-    border-left: 3px solid var(--mc, #ff3b30);
-    background: rgba(6,10,15,0.82);
-    white-space: nowrap; cursor: pointer;
-    transition: background 0.15s, transform 0.15s;
-    backdrop-filter: blur(6px);
-    box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+  .lf-pin {
+    display: flex; flex-direction: column; align-items: center;
+    cursor: pointer; width: 56px;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.7));
   }
-  .lf-marker:hover { background: rgba(20,35,55,0.95); transform: scale(1.06); }
-  .lf-dot {
-    width: 9px; height: 9px; border-radius: 50%;
-    background: var(--mc, #ff3b30); flex-shrink: 0;
+  .lf-pin:hover .lf-pin-dot { transform: scale(1.25); }
+  .lf-pin:hover .lf-pin-label { background: rgba(20,35,55,0.98); }
+  .lf-pin-dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--mc, #ff3b30);
+    border: 2px solid rgba(255,255,255,0.25);
+    transition: transform 0.15s;
+    flex-shrink: 0;
   }
-  .lf-label {
-    font-family: 'Oswald', sans-serif; letter-spacing: 1.5px;
-    color: #e8ecf2; font-size: 11px; font-weight: 600;
+  .lf-pin-line {
+    width: 1.5px; height: 8px;
+    background: var(--mc, #ff3b30);
+    opacity: 0.7;
   }
-  .lf-lvl {
-    font-family: 'JetBrains Mono', monospace; font-size: 9px;
-    color: var(--mc, #ff3b30); opacity: 0.9;
-    border: 1px solid currentColor; padding: 0 3px; border-radius: 1px;
+  .lf-pin-label {
+    background: rgba(6,10,15,0.88);
+    border: 1px solid var(--mc, #ff3b30);
+    border-radius: 2px;
+    padding: 2px 6px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 10px; letter-spacing: 1px; font-weight: 600;
+    color: #e8ecf2; white-space: nowrap;
+    backdrop-filter: blur(4px);
+    transition: background 0.15s;
   }
 
   /* ── AIRPORT MARKERS ── */
@@ -626,13 +631,13 @@
     cursor: default;
   }
 
-  /* ── PULSE ANIMATIONS on .lf-dot ── */
-  @keyframes lf-pulse-red    { 0%,100%{box-shadow:0 0 0 0 rgba(255,59,48,.7)}  60%{box-shadow:0 0 0 7px rgba(255,59,48,0)} }
-  @keyframes lf-pulse-orange { 0%,100%{box-shadow:0 0 0 0 rgba(245,166,35,.6)} 60%{box-shadow:0 0 0 6px rgba(245,166,35,0)} }
-  @keyframes lf-pulse-yellow { 0%,100%{box-shadow:0 0 0 0 rgba(255,204,0,.5)}  60%{box-shadow:0 0 0 5px rgba(255,204,0,0)} }
-  .marker-pulse-red    .lf-dot { animation: lf-pulse-red    1.6s infinite; }
-  .marker-pulse-orange .lf-dot { animation: lf-pulse-orange 2.0s infinite; }
-  .marker-pulse-yellow .lf-dot { animation: lf-pulse-yellow 2.4s infinite; }
+  /* ── PULSE ANIMATIONS ── */
+  @keyframes lf-pulse-red    { 0%,100%{box-shadow:0 0 0 0 rgba(255,59,48,.8)}  60%{box-shadow:0 0 0 8px rgba(255,59,48,0)} }
+  @keyframes lf-pulse-orange { 0%,100%{box-shadow:0 0 0 0 rgba(245,166,35,.7)} 60%{box-shadow:0 0 0 7px rgba(245,166,35,0)} }
+  @keyframes lf-pulse-yellow { 0%,100%{box-shadow:0 0 0 0 rgba(255,204,0,.6)}  60%{box-shadow:0 0 0 6px rgba(255,204,0,0)} }
+  .marker-pulse-red    .lf-pin-dot { animation: lf-pulse-red    1.6s infinite; }
+  .marker-pulse-orange .lf-pin-dot { animation: lf-pulse-orange 2.0s infinite; }
+  .marker-pulse-yellow .lf-pin-dot { animation: lf-pulse-yellow 2.4s infinite; }
 
   /* ── MAP HOVER NEWS TOOLTIP ── */
   #mapNewsTooltip {
@@ -1203,16 +1208,6 @@ function renderNews() {
     </a>
   `).join('');
   document.getElementById('newsCount').textContent = filtered.length + ' 則';
-  bindNewsHover();
-}
-
-function bindNewsHover() {
-  document.querySelectorAll('#newsList .news-item[data-region]').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      const region = el.getAttribute('data-region');
-      if (region) highlightOnMap(region);
-    });
-  });
 }
 
 renderNews();
@@ -1245,7 +1240,7 @@ L.control.zoom({ position: 'bottomright' }).addTo(leafletMap);
 const markers = [
   { lat: 31.4,  lng: 34.35, level: 5, label: '加薩',     id: 'gaza' },
   { lat: 31.9,  lng: 35.2,  level: 5, label: '以色列',   id: 'israel' },
-  { lat: 33.7,  lng: 51.4,  level: 4, label: '伊朗核',   id: 'iran_nuclear' },
+  { lat: 33.7,  lng: 51.4,  level: 4, label: '伊朗',     id: 'iran_nuclear' },
   { lat: 15.4,  lng: 44.2,  level: 4, label: '葉門',     id: 'houthi' },
   { lat: 33.3,  lng: 35.5,  level: 3, label: '黎巴嫩',   id: 'lebanon_south' },
   { lat: 33.3,  lng: 44.4,  level: 3, label: '伊拉克',   id: 'iraq' },
@@ -1269,15 +1264,15 @@ const airportColors = { open: '#00e5a0', partial: '#ffcc00', closed: '#ff3b30' }
 markers.forEach(m => {
   const color = levelColors[m.level] || '#aaa';
   const pulseClass = m.level >= 4 ? 'marker-pulse-red' : m.level === 3 ? 'marker-pulse-orange' : 'marker-pulse-yellow';
-  const lvlText = `LV${m.level}`;
   const icon = L.divIcon({
     className: '',
-    html: `<div class="lf-marker ${pulseClass}" style="--mc:${color}">
-             <div class="lf-dot"></div>
-             <span class="lf-label">${m.label}</span>
-             <span class="lf-lvl">${lvlText}</span>
+    html: `<div class="lf-pin ${pulseClass}" style="--mc:${color}">
+             <div class="lf-pin-dot"></div>
+             <div class="lf-pin-line"></div>
+             <div class="lf-pin-label">${m.label}</div>
            </div>`,
-    iconAnchor: [40, 14]
+    iconSize: [56, 36],
+    iconAnchor: [28, 12]   // anchor at the dot centre
   });
   const mk = L.marker([m.lat, m.lng], { icon }).addTo(leafletMap);
   mk.on('click', () => showConflictPanel(m.id));
