@@ -47,14 +47,15 @@
   /* HEADER */
   .header {
     position: sticky; top: 0; z-index: 100;
-    background: rgba(6,10,15,0.95);
+    background: rgba(6,10,15,0.97);
     border-bottom: 1px solid var(--border);
     backdrop-filter: blur(20px);
     padding: 0 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 60px;
+    height: 72px;
+    gap: 16px;
   }
   .logo {
     display: flex; align-items: center; gap: 12px;
@@ -72,7 +73,36 @@
   }
   .logo-text { font-family: 'Oswald', sans-serif; font-size: 20px; letter-spacing: 3px; color: var(--text-bright); }
   .logo-sub { font-size: 10px; color: var(--text-dim); letter-spacing: 2px; }
-  .header-right { display: flex; align-items: center; gap: 20px; }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .header-stats {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .hstat {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 5px 12px; border-radius: 2px;
+    border: 1px solid var(--border);
+    background: rgba(13,21,32,0.6);
+    min-width: 72px; position: relative; overflow: hidden;
+    cursor: default;
+  }
+  .hstat::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  }
+  .hstat.hs-red::after   { background: var(--red); }
+  .hstat.hs-orange::after { background: var(--accent2); }
+  .hstat.hs-blue::after  { background: var(--accent3); }
+  .hstat.hs-yellow::after { background: var(--yellow); }
+  .hstat.hs-green::after { background: var(--green); }
+  .hstat-val {
+    font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 700;
+    line-height: 1.1;
+  }
+  .hstat.hs-red   .hstat-val { color: var(--red); }
+  .hstat.hs-orange .hstat-val { color: var(--accent2); }
+  .hstat.hs-blue  .hstat-val { color: var(--accent3); }
+  .hstat.hs-yellow .hstat-val { color: var(--yellow); }
+  .hstat.hs-green .hstat-val { color: var(--green); }
+  .hstat-lbl { font-size: 9px; color: var(--text-dim); letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap; }
   .live-badge {
     display: flex; align-items: center; gap: 6px;
     background: rgba(232,55,27,0.15);
@@ -86,51 +116,14 @@
     border-radius: 50%; animation: blink 1s infinite;
   }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-  .last-update { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); }
-
   /* LAYOUT */
   .container { position: relative; z-index: 1; }
   .grid-main {
     display: grid;
     grid-template-columns: 340px 1fr 300px;
-    grid-template-rows: auto 1fr;
     gap: 0;
-    height: calc(100vh - 60px);
+    height: calc(100vh - 72px);
   }
-
-  /* STATS BAR */
-  .stats-bar {
-    grid-column: 1 / -1;
-    display: flex;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-  }
-  .stat-item {
-    flex: 1; padding: 12px 20px;
-    border-right: 1px solid var(--border);
-    display: flex; align-items: center; gap: 12px;
-    position: relative; overflow: hidden;
-    transition: background 0.2s;
-    cursor: default;
-  }
-  .stat-item:hover { background: var(--surface2); }
-  .stat-item::before {
-    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
-  }
-  .stat-item.deaths::before { background: var(--red); }
-  .stat-item.injured::before { background: var(--accent2); }
-  .stat-item.displaced::before { background: var(--accent3); }
-  .stat-item.zones::before { background: var(--yellow); }
-  .stat-item.airports::before { background: var(--green); }
-  .stat-icon { font-size: 22px; }
-  .stat-label { font-size: 10px; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; }
-  .stat-value { font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 700; }
-  .stat-item.deaths .stat-value { color: var(--red); }
-  .stat-item.injured .stat-value { color: var(--accent2); }
-  .stat-item.displaced .stat-value { color: var(--accent3); }
-  .stat-item.zones .stat-value { color: var(--yellow); }
-  .stat-item.airports .stat-value { color: var(--green); }
-  .stat-change { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); }
 
   /* LEFT PANEL - NEWS */
   .panel-left {
@@ -204,8 +197,22 @@
   .news-region {
     font-size: 10px; color: var(--text-dim);
     padding: 1px 5px; background: rgba(30,48,72,0.5);
-    border-radius: 1px;
+    border-radius: 1px; cursor: pointer;
   }
+  .news-lang-badge {
+    font-size: 9px; font-family: 'JetBrains Mono', monospace;
+    padding: 1px 5px; border-radius: 1px; letter-spacing: 0.5px;
+    font-weight: 700; flex-shrink: 0;
+  }
+  .lang-en { background: rgba(0,200,255,0.12); border: 1px solid rgba(0,200,255,0.35); color: var(--accent3); }
+  .lang-zh { background: rgba(0,229,160,0.10); border: 1px solid rgba(0,229,160,0.35); color: var(--green); }
+  .lang-ar { background: rgba(245,166,35,0.12); border: 1px solid rgba(245,166,35,0.35); color: var(--accent2); }
+  .news-summary { font-size: 11px; color: var(--text-dim); line-height: 1.6; margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .news-credibility { font-size: 9px; padding: 1px 5px; border-radius: 1px; }
+  .cred-official { color: var(--green); background: rgba(0,229,160,0.08); border: 1px solid rgba(0,229,160,0.2); }
+  .cred-unofficial { color: var(--text-dim); background: rgba(30,48,72,0.4); border: 1px solid rgba(30,48,72,0.6); }
+  .news-link-icon { font-size: 11px; color: var(--accent3); opacity: 0.6; margin-left: auto; }
+  .news-item { text-decoration: none; display: block; color: inherit; }
 
   /* CENTER - MAP */
   .panel-map {
@@ -417,26 +424,6 @@
   .level-2 { background: rgba(245,166,35,0.12); border: 1px solid var(--accent2); color: var(--accent2); }
   .level-1 { background: rgba(0,229,160,0.1); border: 1px solid var(--green); color: var(--green); }
 
-  /* Ticker */
-  .ticker-bar {
-    background: rgba(232,55,27,0.08); border-top: 1px solid rgba(232,55,27,0.3);
-    padding: 0; height: 36px; overflow: hidden; display: flex; align-items: center;
-    grid-column: 1 / -1;
-  }
-  .ticker-label {
-    background: var(--accent); padding: 0 16px; height: 100%;
-    display: flex; align-items: center;
-    font-family: 'Oswald', sans-serif; font-size: 11px; letter-spacing: 2px;
-    color: white; white-space: nowrap; flex-shrink: 0;
-  }
-  .ticker-track { flex: 1; overflow: hidden; }
-  .ticker-content {
-    display: flex; gap: 60px; animation: ticker 60s linear infinite;
-    white-space: nowrap; font-size: 11px; color: var(--text); font-family: 'JetBrains Mono', monospace;
-  }
-  @keyframes ticker { 0%{transform:translateX(100%)} 100%{transform:translateX(-100%)} }
-  .ticker-sep { color: var(--accent); opacity: 0.5; }
-
   /* MAP OVERLAY */
   .map-container { position: relative; overflow: hidden; }
   .map-overlay-pins { position: absolute; inset: 0; pointer-events: none; }
@@ -538,27 +525,17 @@
 
   /* MOBILE */
   @media (max-width: 768px) {
-    .header { height: 52px; padding: 0 14px; }
-    .logo-text { font-size: 16px; letter-spacing: 2px; }
+    .header { height: 56px; padding: 0 12px; }
+    .logo-text { font-size: 15px; letter-spacing: 2px; }
     .logo-sub { display: none; }
-    .logo-icon { width: 30px; height: 30px; font-size: 13px; }
-    .last-update { display: none; }
+    .logo-icon { width: 28px; height: 28px; font-size: 12px; }
+    .header-stats { display: none; }
     .live-badge { font-size: 9px; padding: 3px 8px; }
     .grid-main {
       grid-template-columns: 1fr;
-      grid-template-rows: auto 1fr;
-      height: calc(100dvh - 52px - 56px);
+      grid-template-rows: 1fr;
+      height: calc(100dvh - 56px - 56px);
     }
-    .stats-bar {
-      overflow-x: auto; flex-wrap: nowrap;
-      scrollbar-width: none; height: 64px;
-    }
-    .stats-bar::-webkit-scrollbar { display: none; }
-    .stat-item { min-width: 118px; padding: 8px 12px; flex-shrink: 0; }
-    .stat-icon { font-size: 16px; }
-    .stat-value { font-size: 17px; }
-    .stat-label { font-size: 9px; }
-    .stat-change { font-size: 9px; }
     .panel-left  { display: none; flex-direction: column; }
     .panel-map   { display: none; flex-direction: column; }
     .panel-right { display: none; flex-direction: column; }
@@ -567,7 +544,7 @@
     .panel-right.mobile-active {
       display: flex !important;
       height: 100%; overflow: hidden;
-      grid-column: 1; grid-row: 2;
+      grid-column: 1; grid-row: 1;
     }
     .panel-left.mobile-active  { overflow-y: auto; }
     .panel-right.mobile-active { overflow-y: auto; }
@@ -576,7 +553,6 @@
     .news-title { font-size: 13px; }
     .news-filter { padding: 0 10px; }
     .filter-btn { padding: 9px 10px; font-size: 10px; }
-    .country-filter .filter-btn { padding: 8px 9px; }
     .panel-header { padding: 11px 14px; }
     .map-layers { top: 10px; left: 10px; gap: 4px; flex-wrap: wrap; max-width: calc(100% - 20px); }
     .layer-btn { padding: 5px 9px; font-size: 10px; }
@@ -586,7 +562,7 @@
     .pin-badge { font-size: 8px; padding: 3px 6px; }
     .conflict-popup {
       min-width: unset; left: 10px; right: 10px;
-      width: auto; transform: none; bottom: 44px;
+      width: auto; transform: none; bottom: 60px;
     }
     .airport-item { padding: 10px 14px; }
     .airspace-item { padding: 10px 14px; }
@@ -595,16 +571,13 @@
     .ai-section { padding: 12px 14px; }
     .ai-input { font-size: 13px; }
     .section-block .panel-header { padding: 11px 14px; }
-    .ticker-bar { font-size: 10px; }
     .mobile-nav { display: flex; }
-    .container { height: calc(100dvh - 52px - 56px); overflow: hidden; }
+    .container { height: calc(100dvh - 56px - 56px); overflow: hidden; }
     .grid-main { height: 100%; }
   }
 
   @media (max-width: 400px) {
-    .logo-text { font-size: 14px; }
-    .stat-item { min-width: 105px; }
-    .stat-value { font-size: 15px; }
+    .logo-text { font-size: 13px; }
     .mobile-tab { font-size: 8px; }
     .mobile-tab-icon { font-size: 17px; }
     .news-title { font-size: 12px; }
@@ -648,11 +621,32 @@
     <div class="logo-icon">⚔</div>
     <div>
       <div class="logo-text">MIDEAST INTEL</div>
-      <div class="logo-sub">中東戰況情報中心</div>
+      <div class="logo-sub">2026以色列—伊朗戰爭 · MIDEAST INTEL</div>
     </div>
   </div>
   <div class="header-right">
-    <div class="last-update">最後更新：<span id="updateTime">--:--:--</span></div>
+    <div class="header-stats">
+      <div class="hstat hs-red">
+        <div class="hstat-val">1,800+</div>
+        <div class="hstat-lbl">累計死亡</div>
+      </div>
+      <div class="hstat hs-orange">
+        <div class="hstat-val">14,000+</div>
+        <div class="hstat-lbl">累計受傷</div>
+      </div>
+      <div class="hstat hs-blue">
+        <div class="hstat-val">230K+</div>
+        <div class="hstat-lbl">流離失所</div>
+      </div>
+      <div class="hstat hs-yellow">
+        <div class="hstat-val">第11天</div>
+        <div class="hstat-lbl">以伊戰爭</div>
+      </div>
+      <div class="hstat hs-green">
+        <div class="hstat-val">8+停飛</div>
+        <div class="hstat-lbl">機場關閉</div>
+      </div>
+    </div>
     <div class="live-badge"><div class="live-dot"></div>即時直播</div>
   </div>
 </header>
@@ -660,49 +654,6 @@
 <div class="container">
   <div class="grid-main">
 
-    <!-- STATS BAR -->
-    <div class="stats-bar">
-      <div class="stat-item deaths">
-        <div class="stat-icon">💀</div>
-        <div>
-          <div class="stat-label">累計死亡</div>
-          <div class="stat-value">189,430</div>
-          <div class="stat-change">↑ +124 今日</div>
-        </div>
-      </div>
-      <div class="stat-item injured">
-        <div class="stat-icon">🩹</div>
-        <div>
-          <div class="stat-label">累計受傷</div>
-          <div class="stat-value">421,800</div>
-          <div class="stat-change">↑ +287 今日</div>
-        </div>
-      </div>
-      <div class="stat-item displaced">
-        <div class="stat-icon">🏳</div>
-        <div>
-          <div class="stat-label">流離失所</div>
-          <div class="stat-value">8.2M</div>
-          <div class="stat-change">人道危機持續</div>
-        </div>
-      </div>
-      <div class="stat-item zones">
-        <div class="stat-icon">⚠</div>
-        <div>
-          <div class="stat-label">活躍衝突區</div>
-          <div class="stat-value">7</div>
-          <div class="stat-change">3 高強度</div>
-        </div>
-      </div>
-      <div class="stat-item airports">
-        <div class="stat-icon">✈</div>
-        <div>
-          <div class="stat-label">機場停飛</div>
-          <div class="stat-value">4</div>
-          <div class="stat-change">6 部分開放</div>
-        </div>
-      </div>
-    </div>
 
     <!-- LEFT PANEL: NEWS -->
     <div class="panel-left">
@@ -718,20 +669,12 @@
         <button class="filter-btn" onclick="filterCat(this,'travel')">旅遊</button>
         <button class="filter-btn" onclick="filterCat(this,'aviation')">航空</button>
       </div>
-      <!-- Country filter row -->
-      <div class="news-filter country-filter" id="countryFilter">
-        <button class="filter-btn active" onclick="filterCountry(this,'all')">🌍 所有</button>
-        <button class="filter-btn" onclick="filterCountry(this,'加薩')">🇵🇸 加薩</button>
-        <button class="filter-btn" onclick="filterCountry(this,'以色列')">🇮🇱 以色列</button>
-        <button class="filter-btn" onclick="filterCountry(this,'葉門')">🇾🇪 葉門</button>
-        <button class="filter-btn" onclick="filterCountry(this,'黎巴嫩')">🇱🇧 黎巴嫩</button>
-        <button class="filter-btn" onclick="filterCountry(this,'敘利亞')">🇸🇾 敘利亞</button>
-        <button class="filter-btn" onclick="filterCountry(this,'伊拉克')">🇮🇶 伊拉克</button>
-        <button class="filter-btn" onclick="filterCountry(this,'伊朗')">🇮🇷 伊朗</button>
-        <button class="filter-btn" onclick="filterCountry(this,'蘇丹')">🇸🇩 蘇丹</button>
-        <button class="filter-btn" onclick="filterCountry(this,'約旦')">🇯🇴 約旦</button>
-        <button class="filter-btn" onclick="filterCountry(this,'阿聯酋')">🇦🇪 阿聯酋</button>
-        <button class="filter-btn" onclick="filterCountry(this,'沙烏地')">🇸🇦 沙烏地</button>
+      <!-- Language filter -->
+      <div class="news-filter" id="langFilter" style="background:rgba(0,200,255,0.03);border-bottom:1px solid rgba(30,48,72,0.6)">
+        <button class="filter-btn active" onclick="filterLang(this,'all')" style="color:var(--text-dim)">🌐 全語言</button>
+        <button class="filter-btn" onclick="filterLang(this,'en')" style="color:var(--text-dim)">🇬🇧 English</button>
+        <button class="filter-btn" onclick="filterLang(this,'zh')" style="color:var(--text-dim)">🇹🇼 中文</button>
+        <button class="filter-btn" onclick="filterLang(this,'ar')" style="color:var(--text-dim)">🇸🇦 عربي</button>
       </div>
       <div class="news-list" id="newsList">
         <div style="padding:40px;text-align:center;color:var(--text-dim)">
@@ -748,10 +691,10 @@
         <!-- Quick-jump buttons -->
         <div class="map-layers" id="mapJumpBtns">
           <button class="layer-btn active" onclick="jumpMap('middle_east')">中東總覽</button>
+          <button class="layer-btn" onclick="jumpMap('iran')">伊朗</button>
           <button class="layer-btn" onclick="jumpMap('gaza')">加薩</button>
           <button class="layer-btn" onclick="jumpMap('yemen')">葉門</button>
           <button class="layer-btn" onclick="jumpMap('syria')">敘利亞</button>
-          <button class="layer-btn" onclick="jumpMap('sudan')">蘇丹</button>
         </div>
 
         <!-- Leaflet Map -->
@@ -777,15 +720,6 @@
         </div>
       </div>
 
-      <!-- Ticker -->
-      <div class="ticker-bar">
-        <div class="ticker-label">⚡ 即時</div>
-        <div class="ticker-track">
-          <div class="ticker-content" id="tickerContent">
-            載入中...
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- RIGHT PANEL -->
@@ -959,21 +893,115 @@
 <!-- Tooltip for conflicts/airports -->
 <script>
 // ====== DATA ======
+// 2026年以色列—伊朗戰爭 · 真實新聞連結
 const newsData = [
-  { type: 'breaking', category: 'military', title: '以色列空軍對加薩北部發動新一輪空襲，目標為哈馬斯指揮中心', time: '3分鐘前', source: 'Reuters', region: '加薩' },
-  { type: 'alert', category: 'humanitarian', title: '聯合國警告加薩人道危機持續惡化，糧食供應僅剩數日', time: '15分鐘前', source: 'UN OCHA', region: '加薩' },
-  { type: 'breaking', category: 'military', title: '葉門胡塞武裝宣稱對紅海商船發射新型飛彈，兩艘貨輪受損', time: '28分鐘前', source: 'Al Jazeera', region: '葉門' },
-  { type: 'normal', category: 'aviation', title: '多家航空公司延長繞避以色列領空決定，至少持續至月底', time: '1小時前', source: 'Aviation Herald', region: '以色列' },
-  { type: 'normal', category: 'military', title: '敘利亞北部庫爾德武裝與土耳其支持民兵發生交火，平民疏散', time: '1.5小時前', source: 'Syria Observatory', region: '敘利亞' },
-  { type: 'normal', category: 'humanitarian', title: '紅十字國際委員會呼籲各方允許加薩人道走廊長期開放', time: '2小時前', source: 'ICRC', region: '加薩' },
-  { type: 'alert', category: 'travel', title: '美國國務院更新旅遊警告：黎巴嫩南部恢復零星砲擊', time: '2.5小時前', source: 'US State Dept', region: '黎巴嫩' },
-  { type: 'normal', category: 'military', title: '伊朗宣布完成新一代無人機部隊組建，提升精準打擊能力', time: '3小時前', source: 'IRNA', region: '伊朗' },
-  { type: 'normal', category: 'aviation', title: '杜拜國際機場創單日客運量新高，中東旅客需求強勁', time: '4小時前', source: 'Gulf News', region: '阿聯酋' },
-  { type: 'normal', category: 'humanitarian', title: '蘇丹內戰滿一年：流離失所人數已達870萬，創非洲新紀錄', time: '5小時前', source: 'BBC Arabic', region: '蘇丹' },
-  { type: 'breaking', category: 'military', title: '伊拉克什葉派民兵炮擊美軍艾因阿薩德空軍基地，造成輕傷', time: '6小時前', source: 'Reuters', region: '伊拉克' },
-  { type: 'normal', category: 'travel', title: '約旦外交部宣布維持正常旅遊狀態，安全形勢相對穩定', time: '8小時前', source: 'Jordan Times', region: '約旦' },
-  { type: 'alert', category: 'military', title: '沙烏地阿拉伯攔截葉門胡塞武裝發射的彈道飛彈，南部省份防空警報響起', time: '10小時前', source: 'Al Arabiya', region: '沙烏地' },
-  { type: 'normal', category: 'travel', title: '沙烏地旅遊局宣布2025年外國旅客創歷史新高，安全情況良好', time: '12小時前', source: 'Saudi Gazette', region: '沙烏地' },
+  { type: 'breaking', lang: 'zh', category: 'military', region: '伊朗', credibility: 'official', time: '最新',
+    source: 'Al Jazeera',
+    url: 'https://www.aljazeera.com/news/2026/3/1/us-israel-attacks-on-iran-death-toll-and-injuries-live-tracker',
+    title: '【傷亡追蹤】美以攻伊第11天：伊朗逾1,270死、以色列13死、美軍8死',
+    summary: '伊朗衛生部確認至少1,270人死亡，包含200名兒童、11名醫護人員。以色列13人死亡，受傷達1,929人。美軍8名士兵在海灣地區陣亡。黎巴嫩486人死亡（以軍打擊真主黨）。伊朗聲稱已對27個美軍基地發動攻擊，科威特、巴林、約旦等國均有傷亡。' },
+
+  { type: 'breaking', lang: 'zh', category: 'military', region: '伊朗', credibility: 'official', time: '11分鐘前',
+    source: 'Al Jazeera 直播',
+    url: 'https://www.aljazeera.com/news/liveblog/2026/3/10/iran-war-live-trump-says-conflict-will-be-over-soon-40-killed-in-tehran',
+    title: '【直播】川普稱衝突「即將結束」；以軍再轟德黑蘭，40人死亡',
+    summary: '美以對伊朗戰爭第11天直播更新。川普表示戰事「很快」結束，但本週不會停止。以軍在德黑蘭最新一輪打擊造成40人死亡。伊朗持續向以色列及波斯灣美軍基地發射飛彈與無人機。' },
+
+  { type: 'alert', lang: 'zh', category: 'military', region: '以色列', credibility: 'official', time: '35分鐘前',
+    source: 'Times of Israel',
+    url: 'https://www.timesofisrael.com/liveblog-march-07-2026/',
+    title: '以軍打擊德黑蘭梅赫拉巴德機場，摧毀16架IRGC用於軍援真主黨的飛機',
+    summary: '以色列國防軍宣稱摧毀梅赫拉巴德機場16架伊斯蘭革命衛隊飛機，稱該機場為「武裝真主黨等代理武裝的核心樞紐」。以軍同時打擊黎巴嫩貝魯特南郊160個真主黨目標。以色列總理內塔尼亞胡表示戰爭「將持續到底，不打折扣」。' },
+
+  { type: 'alert', lang: 'zh', category: 'military', region: '黎巴嫩', credibility: 'official', time: '1小時前',
+    source: 'PBS NewsHour',
+    url: 'https://www.pbs.org/newshour/show/hezbollah-and-israel-reignite-conflict-in-lebanon-after-iran-strikes',
+    title: '黎巴嫩危機：真主黨向以色列發射火箭；以軍反擊貝魯特，50人死亡',
+    summary: '真主黨重啟對以色列攻擊，以軍大規模反擊黎巴嫩南部及貝魯特南郊，造成逾50人死亡，數萬人再度流離失所。黎巴嫩政府宣布真主黨軍事活動為非法，這是對真主黨史無前例的強硬立場。貝魯特領空目前仍開放。' },
+
+  { type: 'normal', lang: 'zh', category: 'aviation', region: '以色列', credibility: 'official', time: '1.5小時前',
+    source: 'TIME',
+    url: 'https://time.com/7382919/iran-war-travel-middle-east-flight-cancellations/',
+    title: '航空大亂局：以色列、伊朗、伊拉克、科威特、敘利亞、巴林領空全面關閉',
+    summary: '美以攻伊引發中東史上最大規模航空癱瘓。以色列本-古里安機場逐步重開，12萬名以色列旅客仍滯留海外。杜哈哈馬德機場、科威特機場暫停運營。德黑蘭伊瑪目霍梅尼機場天空空無一機。杜拜機場遭伊朗飛彈攻擊波及後已恢復部分運營。' },
+
+  { type: 'normal', lang: 'zh', category: 'aviation', region: '以色列', credibility: 'official', time: '2小時前',
+    source: 'Euronews',
+    url: 'https://www.euronews.com/2026/03/04/us-and-israeli-strikes-on-iran-disrupt-regional-and-international-flights',
+    title: '維珍航空恢復杜拜—倫敦航班；伊朗、伊拉克、科威特、敘利亞領空仍關閉',
+    summary: '維珍航空成為首批恢復杜拜航班的航空公司之一，同時恢復利雅德航線。波斯灣地區數千航班取消。伊朗、伊拉克、巴林、科威特、敘利亞、以色列領空持續關閉。' },
+
+  { type: 'normal', lang: 'zh', category: 'humanitarian', region: '伊朗', credibility: 'official', time: '3小時前',
+    source: 'Al Jazeera',
+    url: 'https://www.aljazeera.com/news/2026/3/9/iran-says-1255-killed-in-us-israeli-attacks-mostly-civilians',
+    title: '伊朗副衛生部長：1,255人死亡，多為平民；德黑蘭油庫遭炸引發毒煙',
+    summary: '伊朗副衛生部長賈法里昂向半島電視台表示，至少1,255人死亡，包含200名兒童及11名醫護人員，逾12,000人受傷。德黑蘭沙赫蘭油庫、煉油廠遭打擊後火焰沖天，有毒濃煙籠罩首都，當局警告兒童及老人留在室內。29所醫療設施受損，其中10所被迫關閉。' },
+
+  { type: 'normal', lang: 'zh', category: 'military', region: '伊朗', credibility: 'official', time: '4小時前',
+    source: 'CFR Daily Brief',
+    url: 'https://www.cfr.org/articles/war-intensifies-in-lebanon',
+    title: '戰爭擴大：伊朗無人機攻擊巴林、科威特、沙烏地；法國宣布提供黎巴嫩援助',
+    summary: '伊朗每日飛彈和無人機發射量雖較初期下降，但改以無人機為主力，打擊範圍更廣。卡達能源部長警告，若戰事持續，海灣能源出口商可能數日內被迫停產，油價或升至每桶150美元。法國總統馬克宏宣布向黎巴嫩提供裝甲車及人道援助。' },
+
+  { type: 'alert', lang: 'zh', category: 'military', region: '伊朗', credibility: 'official', time: '5小時前',
+    source: 'ACLED',
+    url: 'https://acleddata.com/update/middle-east-special-issue-march-2026',
+    title: '【深度分析】ACLED：美以已打擊伊朗26個省份，戰爭或比預期更持久',
+    summary: 'ACLED衝突數據與地點事件資料庫最新報告指出，美以聯合打擊已覆蓋伊朗31個省中的26個，德黑蘭為最密集打擊目標。伊朗前5天對以色列發動逾90次攻擊，約20次命中平民區。伊拉克方面，美以有限打擊已造成至少10人死亡。分析認為，伊朗持續作戰的可能性高於屈服，戰爭走向比預期更難預測。' },
+
+  { type: 'normal', lang: 'zh', category: 'travel', region: '以色列', credibility: 'official', time: '6小時前',
+    source: 'Modern Diplomacy',
+    url: 'https://moderndiplomacy.eu/2026/03/10/facts-counting-the-casualties-in-the-us-israel-war-on-iran/',
+    title: '各國傷亡彙整（3/10更新）：黎巴嫩486死、伊拉克15死、阿聯酋6死',
+    summary: '截至3月10日各方傷亡：伊朗至少1,270死（不含軍方），黎巴嫩486死，以色列13死、1,929傷，美軍8死，伊拉克15死，阿聯酋6死，沙烏地2死，巴林2死，科威特2死，敘利亞4死，阿曼1死。美軍潛艦在斯里蘭卡外海擊沉伊朗軍艦，造成104人死亡。' },
+
+  { type: 'normal', lang: 'zh', category: 'travel', region: '黎巴嫩', credibility: 'official', time: '7小時前',
+    source: 'The National',
+    url: 'https://www.thenationalnews.com/news/mena/2026/03/01/uneasy-quiet-in-lebanon-as-hezbollah-sits-on-sidelines-of-iran-us-war/',
+    title: '黎巴嫩局勢：政府宣布真主黨軍事行動為非法，貝魯特機場暫時維持開放',
+    summary: '黎巴嫩政府在危機初期謹慎保持距離，總理薩拉姆召開緊急內閣會議後宣布真主黨軍事及情報活動為非法，此舉史無前例。貝魯特機場仍開放，但多國發佈禁止進入黎巴嫩領空的航行通告。市民憂慮持續，排隊搶購燃料與生活必需品。' },
+
+  { type: 'normal', lang: 'zh', category: 'aviation', region: '以色列', credibility: 'official', time: '8小時前',
+    source: 'Safe Airspace',
+    url: 'https://safeairspace.net/summary/',
+    title: '領空速報：以色列、伊朗、敘利亞、伊拉克、科威特、巴林全面關閉',
+    summary: '以色列（TLV/特拉維夫FIR）領空自2月28日起全面關閉，正逐步重開。伊朗（德黑蘭FIR）完全關閉。敘利亞（大馬士革FIR）關閉。法國、德國、義大利、英國均已發佈NOTAM禁止進入黎巴嫩領空。黎巴嫩仍保持有限開放，僅允許從地中海方向起降貝魯特機場。' },
+
+  { type: 'normal', lang: 'en', category: 'military', region: '伊朗', credibility: 'official', time: '最新',
+    source: 'Al Jazeera EN',
+    url: 'https://www.aljazeera.com/news/2026/3/1/us-israel-attacks-on-iran-death-toll-and-injuries-live-tracker',
+    title: '[EN] Live Tracker: 1,255 killed in Iran; 13 in Israel; 8 US soldiers dead across Gulf',
+    summary: 'Preliminary figures show 1,255 dead in Iran including 200 children, at least 13 in Israel, 8 US soldiers and 14 killed in Gulf states. Iran\'s IRGC claims attacks on 27 US bases. Lebanon health ministry reports 394 killed in Israeli strikes following Hezbollah rocket launches.' },
+
+  { type: 'breaking', lang: 'en', category: 'military', region: '伊朗', credibility: 'official', time: '2hrs ago',
+    source: 'Al Jazeera EN',
+    url: 'https://www.aljazeera.com/news/liveblog/2026/3/10/iran-war-live-trump-says-conflict-will-be-over-soon-40-killed-in-tehran',
+    title: '[EN] Iran War Live: Trump says "ending soon"; 40 killed in Tehran strike; Iran fires new missile wave',
+    summary: 'Trump says conflict ending "very soon" but not this week. 40 killed in latest Tel Aviv FIR strikes on Tehran. Iran launches fresh waves of ballistic missiles at Israel. Pentagon confirms 140 US troops wounded across region since war began Feb 28.' },
+
+  { type: 'alert', lang: 'en', category: 'humanitarian', region: '伊朗', credibility: 'official', time: '3hrs ago',
+    source: 'CFR',
+    url: 'https://www.cfr.org/articles/war-intensifies-in-lebanon',
+    title: '[EN] War Intensifies in Lebanon — 230,000 displaced; Israel orders Beirut evacuation of 500K',
+    summary: 'Israel ordered evacuation of Beirut district home to 500,000 people ahead of strikes on Hezbollah. At least 230,000 displaced across region per UN. Iran\'s daily missile launches declining but drones increasing. Qatar warns oil could hit $150/barrel if war continues.' },
+
+  { type: 'alert', lang: 'en', category: 'aviation', region: '以色列', credibility: 'official', time: '4hrs ago',
+    source: 'TIME',
+    url: 'https://time.com/7382919/iran-war-travel-middle-east-flight-cancellations/',
+    title: '[EN] How the Iran War Is Disrupting Travel: TLV partially reopening; DOH, KWI suspended',
+    summary: 'Ben Gurion Airport (TLV) began phased reopening; 120,000 Israelis still stranded abroad. Hamad International (DOH) and Kuwait International suspended. Tehran\'s Imam Khomeini Airport fully closed. Dubai\'s DXB partially recovering after Iranian strike evacuation.' },
+
+  { type: 'normal', lang: 'ar', category: 'military', region: '伊朗', credibility: 'official', time: 'الآن',
+    source: 'الجزيرة',
+    url: 'https://www.aljazeera.net/news/2026/3/10/',
+    title: '[阿文] اليوم 11 | إيران: 1,270 قتيلاً.. وطهران تواصل الهجمات على قواعد أمريكية في الخليج',
+    summary: 'وزارة الصحة الإيرانية تؤكد مقتل 1,270 شخصاً في الغارات الأمريكية الإسرائيلية، من بينهم 200 طفل. إيران تواصل ضرب القواعد الأمريكية في البحرين والكويت وقطر. الرئيس ترامب يقول إن الصراع سينتهي "قريباً جداً".' },
+
+  { type: 'alert', lang: 'ar', category: 'humanitarian', region: '黎巴嫩', credibility: 'official', time: 'منذ 3 ساعات',
+    source: 'الجزيرة',
+    url: 'https://www.aljazeera.net/news/2026/3/7/',
+    title: '[阿文] لبنان: 486 قتيلاً في غارات إسرائيلية.. وبيروت تحت النيران مجدداً',
+    summary: 'وزارة الصحة اللبنانية: 486 قتيلاً بينهم 83 طفلاً في الغارات الإسرائيلية منذ انطلاق العمليات. إسرائيل تأمر بإخلاء أحياء بيروت الجنوبية وتقصف 160 هدفاً لحزب الله. الحكومة اللبنانية تحظر النشاط العسكري لحزب الله.' },
 ];
 
 const conflictData = {
@@ -1067,7 +1095,7 @@ const countryData = {
 
 // ====== NEWS FILTER STATE ======
 let activeCat = 'all';
-let activeCountry = 'all';
+let activeLang = 'all';
 
 function filterCat(btn, cat) {
   activeCat = cat;
@@ -1075,9 +1103,9 @@ function filterCat(btn, cat) {
   btn.classList.add('active');
   renderNews();
 }
-function filterCountry(btn, country) {
-  activeCountry = country;
-  document.querySelectorAll('#countryFilter .filter-btn').forEach(b => b.classList.remove('active'));
+function filterLang(btn, lang) {
+  activeLang = lang;
+  document.querySelectorAll('#langFilter .filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderNews();
 }
@@ -1085,7 +1113,7 @@ function filterCountry(btn, country) {
 function renderNews() {
   let filtered = newsData;
   if (activeCat !== 'all') filtered = filtered.filter(n => n.category === activeCat);
-  if (activeCountry !== 'all') filtered = filtered.filter(n => n.region === activeCountry);
+  if (activeLang !== 'all') filtered = filtered.filter(n => n.lang === activeLang);
   const list = document.getElementById('newsList');
   if (filtered.length === 0) {
     list.innerHTML = '<div style="padding:30px;text-align:center;color:var(--text-dim);font-size:12px">此篩選條件下無新聞</div>';
@@ -1093,44 +1121,25 @@ function renderNews() {
     return;
   }
   list.innerHTML = filtered.map(n => `
-    <div class="news-item ${n.type}" onclick="highlightOnMap('${n.region}')">
+    <a class="news-item ${n.type}" href="${n.url}" target="_blank" rel="noopener noreferrer"
+       onclick="highlightOnMap('${n.region}')">
       <div class="news-title">${n.title}</div>
+      ${n.summary ? `<div class="news-summary">${n.summary}</div>` : ''}
       <div class="news-meta">
         <span class="news-time">${n.time}</span>
         <span class="news-source">${n.source}</span>
-        <span class="news-region" style="cursor:pointer" onclick="event.stopPropagation();quickFilterCountry('${n.region}')">${n.region}</span>
+        <span class="news-lang-badge lang-${n.lang || 'en'}">${n.lang === 'ar' ? '阿文' : n.lang === 'zh' ? '中文' : 'EN'}</span>
+        <span class="news-region">${n.region}</span>
+        <span class="news-credibility ${n.credibility === 'official' ? 'cred-official' : 'cred-unofficial'}">${n.credibility === 'official' ? '✓ 官方消息' : '◎ 非官方'}</span>
+        <span class="news-link-icon">↗</span>
       </div>
-    </div>
+    </a>
   `).join('');
   document.getElementById('newsCount').textContent = filtered.length + ' 則';
 }
 
-function quickFilterCountry(region) {
-  // Clicking a region tag in news item auto-filters
-  activeCountry = region;
-  document.querySelectorAll('#countryFilter .filter-btn').forEach(b => {
-    b.classList.toggle('active', b.textContent.includes(region));
-  });
-  renderNews();
-}
-
 renderNews();
 
-// ====== TICKER ======
-const tickers = [
-  '🔴 加薩最新：以軍對拉法發動地面攻勢',
-  '⚠ 葉門：胡塞攻擊紅海商船，2艘受損',
-  '✈ 多家航空延長繞避以色列領空',
-  '🆘 聯合國：加薩糧食供應緊急告急',
-  '📡 伊拉克：美軍基地遭火箭彈攻擊',
-  '🚨 黎巴嫩南部：發現新一輪砲擊事件',
-  '📊 蘇丹：流離失所人數突破870萬',
-  '⚡ 敘利亞：土耳其空軍打擊庫德武裝據點',
-  '🛡 沙烏地：成功攔截胡塞飛彈，南部防空警戒升級',
-];
-document.getElementById('tickerContent').innerHTML = tickers.map((t,i) => `<span>${t}</span><span class="ticker-sep">|</span>`).join('');
-
-// ====== GOOGLE MAP JUMP ======
 // ====== LEAFLET MAP ======
 const mapViews = {
   middle_east: { lat: 27, lng: 40, zoom: 5 },
@@ -1242,15 +1251,6 @@ function showConflictPanel(id) {
 }
 
 // (highlightOnMap is now defined above with Leaflet flyTo)
-
-// ====== CLOCK ======
-function updateTime() {
-  const now = new Date();
-  document.getElementById('updateTime').textContent =
-    now.toLocaleTimeString('zh-TW', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-}
-setInterval(updateTime, 1000);
-updateTime();
 
 // ====== AI ======
 async function askAI() {
