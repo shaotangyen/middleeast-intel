@@ -175,8 +175,16 @@
     padding: 14px 18px; border-bottom: 1px solid rgba(30,48,72,0.5);
     cursor: pointer; transition: background 0.15s;
     position: relative;
+    display: block; text-decoration: none; color: inherit;
   }
   .news-item:hover { background: var(--surface2); }
+  .news-item:hover .news-title { color: var(--text-bright); }
+  .news-item:hover .news-link-icon { opacity: 1; transform: translate(1px,-1px); }
+  .news-link-icon {
+    font-size: 11px; color: var(--accent3);
+    opacity: 0; transition: all 0.15s;
+    margin-left: auto;
+  }
   .news-item.breaking::before {
     content: 'BREAKING';
     display: inline-block; padding: 1px 6px;
@@ -964,20 +972,20 @@
 <script>
 // ====== DATA ======
 const newsData = [
-  { type: 'breaking', category: 'military', title: '以色列空軍對加薩北部發動新一輪空襲，目標為哈馬斯指揮中心', time: '3分鐘前', source: 'Reuters', region: '加薩' },
-  { type: 'alert', category: 'humanitarian', title: '聯合國警告加薩人道危機持續惡化，糧食供應僅剩數日', time: '15分鐘前', source: 'UN OCHA', region: '加薩' },
-  { type: 'breaking', category: 'military', title: '葉門胡塞武裝宣稱對紅海商船發射新型飛彈，兩艘貨輪受損', time: '28分鐘前', source: 'Al Jazeera', region: '葉門' },
-  { type: 'normal', category: 'aviation', title: '多家航空公司延長繞避以色列領空決定，至少持續至月底', time: '1小時前', source: 'Aviation Herald', region: '以色列' },
-  { type: 'normal', category: 'military', title: '敘利亞北部庫爾德武裝與土耳其支持民兵發生交火，平民疏散', time: '1.5小時前', source: 'Syria Observatory', region: '敘利亞' },
-  { type: 'normal', category: 'humanitarian', title: '紅十字國際委員會呼籲各方允許加薩人道走廊長期開放', time: '2小時前', source: 'ICRC', region: '加薩' },
-  { type: 'alert', category: 'travel', title: '美國國務院更新旅遊警告：黎巴嫩南部恢復零星砲擊', time: '2.5小時前', source: 'US State Dept', region: '黎巴嫩' },
-  { type: 'normal', category: 'military', title: '伊朗宣布完成新一代無人機部隊組建，提升精準打擊能力', time: '3小時前', source: 'IRNA', region: '伊朗' },
-  { type: 'normal', category: 'aviation', title: '杜拜國際機場創單日客運量新高，中東旅客需求強勁', time: '4小時前', source: 'Gulf News', region: '阿聯酋' },
-  { type: 'normal', category: 'humanitarian', title: '蘇丹內戰滿一年：流離失所人數已達870萬，創非洲新紀錄', time: '5小時前', source: 'BBC Arabic', region: '蘇丹' },
-  { type: 'breaking', category: 'military', title: '伊拉克什葉派民兵炮擊美軍艾因阿薩德空軍基地，造成輕傷', time: '6小時前', source: 'Reuters', region: '伊拉克' },
-  { type: 'normal', category: 'travel', title: '約旦外交部宣布維持正常旅遊狀態，安全形勢相對穩定', time: '8小時前', source: 'Jordan Times', region: '約旦' },
-  { type: 'alert', category: 'military', title: '沙烏地阿拉伯攔截葉門胡塞武裝發射的彈道飛彈，南部省份防空警報響起', time: '10小時前', source: 'Al Arabiya', region: '沙烏地' },
-  { type: 'normal', category: 'travel', title: '沙烏地旅遊局宣布2025年外國旅客創歷史新高，安全情況良好', time: '12小時前', source: 'Saudi Gazette', region: '沙烏地' },
+  { type: 'breaking', category: 'military', title: '以色列空軍對加薩北部發動新一輪空襲，目標為哈馬斯指揮中心', time: '3分鐘前', source: 'Reuters', region: '加薩', url: 'https://www.reuters.com/world/middle-east/' },
+  { type: 'alert', category: 'humanitarian', title: '聯合國警告加薩人道危機持續惡化，糧食供應僅剩數日', time: '15分鐘前', source: 'UN OCHA', region: '加薩', url: 'https://www.ochaopt.org/' },
+  { type: 'breaking', category: 'military', title: '葉門胡塞武裝宣稱對紅海商船發射新型飛彈，兩艘貨輪受損', time: '28分鐘前', source: 'Al Jazeera', region: '葉門', url: 'https://www.aljazeera.com/tag/houthi/' },
+  { type: 'normal', category: 'aviation', title: '多家航空公司延長繞避以色列領空決定，至少持續至月底', time: '1小時前', source: 'Aviation Herald', region: '以色列', url: 'https://avherald.com/' },
+  { type: 'normal', category: 'military', title: '敘利亞北部庫爾德武裝與土耳其支持民兵發生交火，平民疏散', time: '1.5小時前', source: 'Syria Observatory', region: '敘利亞', url: 'https://www.syriahr.com/en/' },
+  { type: 'normal', category: 'humanitarian', title: '紅十字國際委員會呼籲各方允許加薩人道走廊長期開放', time: '2小時前', source: 'ICRC', region: '加薩', url: 'https://www.icrc.org/en/where-we-work/middle-east/israel-and-occupied-territories' },
+  { type: 'alert', category: 'travel', title: '美國國務院更新旅遊警告：黎巴嫩南部恢復零星砲擊', time: '2.5小時前', source: 'US State Dept', region: '黎巴嫩', url: 'https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/lebanon-travel-advisory.html' },
+  { type: 'normal', category: 'military', title: '伊朗宣布完成新一代無人機部隊組建，提升精準打擊能力', time: '3小時前', source: 'IRNA', region: '伊朗', url: 'https://en.irna.ir/' },
+  { type: 'normal', category: 'aviation', title: '杜拜國際機場創單日客運量新高，中東旅客需求強勁', time: '4小時前', source: 'Gulf News', region: '阿聯酋', url: 'https://gulfnews.com/uae/transport/' },
+  { type: 'normal', category: 'humanitarian', title: '蘇丹內戰滿一年：流離失所人數已達870萬，創非洲新紀錄', time: '5小時前', source: 'BBC Arabic', region: '蘇丹', url: 'https://www.bbc.com/arabic/topics/c2lej05l471t' },
+  { type: 'breaking', category: 'military', title: '伊拉克什葉派民兵炮擊美軍艾因阿薩德空軍基地，造成輕傷', time: '6小時前', source: 'Reuters', region: '伊拉克', url: 'https://www.reuters.com/world/middle-east/' },
+  { type: 'normal', category: 'travel', title: '約旦外交部宣布維持正常旅遊狀態，安全形勢相對穩定', time: '8小時前', source: 'Jordan Times', region: '約旦', url: 'https://jordantimes.com/' },
+  { type: 'alert', category: 'military', title: '沙烏地阿拉伯攔截葉門胡塞武裝發射的彈道飛彈，南部省份防空警報響起', time: '10小時前', source: 'Al Arabiya', region: '沙烏地', url: 'https://english.alarabiya.net/News/gulf/Saudi-Arabia' },
+  { type: 'normal', category: 'travel', title: '沙烏地旅遊局宣布2025年外國旅客創歷史新高，安全情況良好', time: '12小時前', source: 'Saudi Gazette', region: '沙烏地', url: 'https://saudigazette.com.sa/' },
 ];
 
 const conflictData = {
@@ -1097,14 +1105,16 @@ function renderNews() {
     return;
   }
   list.innerHTML = filtered.map(n => `
-    <div class="news-item ${n.type}" onclick="highlightOnMap('${n.region}')">
+    <a class="news-item ${n.type}" href="${n.url}" target="_blank" rel="noopener noreferrer"
+       onclick="highlightOnMap('${n.region}')">
       <div class="news-title">${n.title}</div>
       <div class="news-meta">
         <span class="news-time">${n.time}</span>
         <span class="news-source">${n.source}</span>
-        <span class="news-region" style="cursor:pointer" onclick="event.stopPropagation();quickFilterCountry('${n.region}')">${n.region}</span>
+        <span class="news-region" onclick="event.preventDefault();event.stopPropagation();quickFilterCountry('${n.region}')">${n.region}</span>
+        <span class="news-link-icon">↗</span>
       </div>
-    </div>
+    </a>
   `).join('');
   document.getElementById('newsCount').textContent = filtered.length + ' 則';
 }
