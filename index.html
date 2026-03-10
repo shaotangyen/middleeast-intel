@@ -199,8 +199,16 @@
   .news-region {
     font-size: 10px; color: var(--text-dim);
     padding: 1px 5px; background: rgba(30,48,72,0.5);
-    border-radius: 1px;
+    border-radius: 1px; cursor: pointer;
   }
+  .news-lang-badge {
+    font-size: 9px; font-family: 'JetBrains Mono', monospace;
+    padding: 1px 5px; border-radius: 1px; letter-spacing: 0.5px;
+    font-weight: 700; flex-shrink: 0;
+  }
+  .lang-en { background: rgba(0,200,255,0.12); border: 1px solid rgba(0,200,255,0.35); color: var(--accent3); }
+  .lang-zh { background: rgba(0,229,160,0.10); border: 1px solid rgba(0,229,160,0.35); color: var(--green); }
+  .lang-ar { background: rgba(245,166,35,0.12); border: 1px solid rgba(245,166,35,0.35); color: var(--accent2); }
   .news-credibility {
     font-size: 9px; font-weight: 700; letter-spacing: 0.5px;
     padding: 1px 6px; border-radius: 1px; white-space: nowrap; flex-shrink: 0;
@@ -755,6 +763,13 @@
         <button class="filter-btn" onclick="filterCat(this,'travel')">旅遊</button>
         <button class="filter-btn" onclick="filterCat(this,'aviation')">航空</button>
       </div>
+      <!-- Language filter -->
+      <div class="news-filter" id="langFilter" style="background:rgba(0,200,255,0.03);border-bottom:1px solid rgba(30,48,72,0.6)">
+        <button class="filter-btn active" onclick="filterLang(this,'all')" style="color:var(--text-dim)">🌐 全語言</button>
+        <button class="filter-btn" onclick="filterLang(this,'en')" style="color:var(--text-dim)">🇬🇧 English</button>
+        <button class="filter-btn" onclick="filterLang(this,'zh')" style="color:var(--text-dim)">🇹🇼 中文</button>
+        <button class="filter-btn" onclick="filterLang(this,'ar')" style="color:var(--text-dim)">🇸🇦 عربي</button>
+      </div>
       <!-- Country filter row -->
       <div class="news-filter country-filter" id="countryFilter">
         <button class="filter-btn active" onclick="filterCountry(this,'all')">🌍 所有</button>
@@ -985,87 +1000,155 @@
 <!-- Tooltip for conflicts/airports -->
 <script>
 // ====== DATA ======
-// 注意：以下新聞為2026年假設性衝突情境，連結指向各媒體對應主題的搜尋/專題頁面
+// 真實新聞報導連結（英文 / 中文 / 阿拉伯文）
 const newsData = [
-  { type: 'breaking', category: 'military', region: '伊朗', credibility: 'official', time: '8分鐘前', source: '以色列國防軍 IDF',
-    url: 'https://www.idf.il/en/mini-sites/wars-and-operations/iron-swords-war/',
-    title: '以色列空軍對伊朗納坦茲核設施發動精準打擊，伊朗確認部分設施受損',
-    summary: '以色列國防軍（IDF）確認對伊朗納坦茲鈾濃縮設施發動代號「上帝之手」空襲行動，出動逾30架F-35I隱身戰機。攻擊目標包含地上離心機廠房及地下儲存區。伊朗官方承認部分地表設施受損，但聲稱核心地下設施完好無缺。國際原子能總署（IAEA）已派員前往核查，並呼籲各方克制。此次打擊被認為是2026年以色列—伊朗衝突的引爆點。' },
 
-  { type: 'breaking', category: 'military', region: '伊朗', credibility: 'official', time: '22分鐘前', source: 'IRNA 伊朗國家通訊社',
-    url: 'https://en.irna.ir/search/?q=Israel+attack',
-    title: '伊朗革命衛隊宣布發射逾百枚彈道飛彈攻擊以色列多處目標',
-    summary: '伊朗伊斯蘭革命衛隊（IRGC）宣布代號「真誠承諾III」報復行動，向以色列境內發射120枚以上Shahab-3及Emad彈道飛彈。攻擊目標涵蓋特拉維夫、海法、內格夫沙漠的軍事基地。伊朗官方媒體稱多個目標被命中，以色列方面正進行損失評估。此為伊朗迄今對以色列規模最大的直接軍事打擊，標誌兩國進入全面戰爭狀態。' },
+  // ── 英文 / English ──
+  { type: 'breaking', lang: 'en', category: 'military', region: '伊朗', credibility: 'official',
+    time: '3月10日', source: 'Al Jazeera',
+    url: 'https://www.aljazeera.com/news/2026/3/10/iran-war-what-is-happening-on-day-11-of-us-israel-attacks',
+    title: '【EN】Day 11 – Three waves of Iranian missiles on central Israel; Trump says war ending "pretty soon"',
+    summary: 'On the 11th day of the US-Israeli war on Iran, Iran fired three waves of missiles at central Israel. Trump told CBS the war would end "pretty soon" but not this week. Lebanon's death toll exceeded 486. Iranian foreign minister rejected ceasefire calls. Gulf states continued intercepting Iranian drones and missiles.' },
 
-  { type: 'alert', category: 'military', region: '以色列', credibility: 'official', time: '35分鐘前', source: 'Reuters',
-    url: 'https://www.reuters.com/site-search/?query=Israel+Iran+missile+iron+dome',
-    title: '以色列防空系統「鐵穹」及「箭-3」攔截大部分來襲飛彈，特拉維夫空襲警報響起',
-    summary: '以色列多層次防空系統成功攔截約85%來襲飛彈。「箭-3」系統負責高空攔截彈道飛彈，「大衛彈弓」攔截中程威脅，「鐵穹」則處理低空火箭彈。特拉維夫、耶路撒冷及海法響起空襲警報，市民緊急進入防空洞。部分飛彈穿透防線，造成特拉維夫南郊及內蓋夫地區建築受損，以色列官方公布有平民傷亡。美軍USS艾森豪號航母戰鬥群亦協助攔截部分威脅。' },
+  { type: 'breaking', lang: 'en', category: 'humanitarian', region: '加薩', credibility: 'official',
+    time: '3月10日', source: 'Al Jazeera',
+    url: 'https://www.aljazeera.com/news/2026/3/10/gaza-food-prices-soar-as-border-closures-deepen-shortages-amid-iran-war',
+    title: '【EN】Gaza food prices soar as border closures deepen shortages amid Iran war',
+    summary: 'Gaza residents face rising food prices and worsening shortages as the US-Israel-Iran war disrupts aid supply lines. Israel closed crossings on Feb 28 when it attacked Iran. WHO says only ~200 trucks/day are entering Gaza vs. 600 needed. About 18,000 patients including wounded children are still waiting to be evacuated.' },
 
-  { type: 'normal', category: 'military', region: '以色列', credibility: 'official', time: '1小時前', source: 'US DoD 美國國防部',
-    url: 'https://www.defense.gov/News/News-Stories/?query=carrier+strike+group+Mediterranean',
-    title: '美國第五艦隊航母打擊群進駐東地中海，宣布支持以色列防衛作戰',
-    summary: '美國國防部長宣布，USS杜魯門號（CVN-75）航母打擊群已部署至東地中海，作為對以色列安全承諾的具體表現。航母戰鬥群攜帶多艘驅逐艦及潛艦，具備攔截彈道飛彈能力。白宮聲明美國「全力支持以色列自衛權」，但同時呼籲雙方避免衝突進一步升級。美方明確表示不會主動攻擊伊朗境內目標，但將協防以色列免遭飛彈攻擊。' },
+  { type: 'alert', lang: 'en', category: 'military', region: '以色列', credibility: 'official',
+    time: '3月10日', source: 'Al Jazeera',
+    url: 'https://www.aljazeera.com/news/2026/3/10/no-middle-ground-israelis-back-iran-war-despite-taking-mounting-hits',
+    title: '【EN】"No middle ground": Israelis back Iran war despite mounting hits; 11 Israelis killed so far',
+    summary: 'Antiwar voices are rare in Israel as public support for the Iran war grows. Iran claims its missiles hit military sites and Netanyahu's office. Eleven Israelis have been killed in Iranian strikes since Feb 28. Netanyahu invoked biblical language comparing Iranians to Amalek. Antiwar protesters have faced police violence and arrests.' },
 
-  { type: 'alert', category: 'military', region: '伊朗', credibility: 'official', time: '1.5小時前', source: 'IAEA 國際原子能總署',
-    url: 'https://www.iaea.org/topics/iran-and-the-iaea',
-    title: '伊朗宣稱已恢復20%濃縮鈾生產，否認核設施遭摧毀說法',
-    summary: '伊朗原子能組織（AEOI）召開緊急記者會，聲稱納坦茲設施「核心功能完好」，並宣布已將鈾濃縮純度提升至20%。伊朗官員警告，若再遭攻擊將考慮退出《核不擴散條約》（NPT）並驅逐IAEA核查員。IAEA總幹事表示無法立即核實伊朗聲明，並強調輻射監測數據顯示納坦茲周邊有異常讀數。美國及歐盟對伊朗威脅表示「嚴重關切」。' },
+  { type: 'alert', lang: 'en', category: 'military', region: '伊朗', credibility: 'official',
+    time: '3月9日', source: 'Al Jazeera',
+    url: 'https://www.aljazeera.com/news/2026/3/7/israel-kills-father-daughter-in-gaza-as-genocide-continues-amid-wider-war',
+    title: '【EN】Israel kills father and daughter in Gaza as genocide continues amid wider regional war',
+    summary: 'A father and daughter were killed in an Israeli drone attack in central Khan Younis as the world focuses on the US-Israeli war on Iran. Since the Oct 10 ceasefire, 640+ Palestinians have been killed. Over 72,123 Palestinians have been killed since October 2023, while 171,805 have been injured. The Rafah crossing remains closed.' },
 
-  { type: 'normal', category: 'aviation', region: '以色列', credibility: 'official', time: '2小時前', source: 'Aviation Herald',
-    url: 'https://avherald.com/h?search=Israel',
-    title: '全球逾40家航空宣布暫停以色列及伊朗航線，波斯灣航路大幅調整',
-    summary: '歐洲主要航空公司包括漢莎、法航、英航、荷蘭皇家航空已全面暫停飛往特拉維夫本-古里安機場的航班，停飛至少持續至月底。多家航空公司同時取消德黑蘭航線，並調整波斯灣區域飛行計畫，避免進入伊朗及以色列領空。受航路繞行影響，飛往亞洲及澳洲的班機延誤達3-5小時。油價飆升亦推高燃油附加費，預計旅客機票成本上漲15-25%。' },
+  { type: 'normal', lang: 'en', category: 'humanitarian', region: '加薩', credibility: 'official',
+    time: '3月9日', source: 'Al Jazeera',
+    url: 'https://www.aljazeera.com/features/2026/3/9/how-us-israel-war-on-iran-deepens-gaza-crisis',
+    title: '【EN】How US-Israel war on Iran deepens Gaza crisis – crossings closed, ceasefire violated 144 days in a row',
+    summary: 'As global focus turns to Iran, Gaza faces worsening crises. Israel has tightened its grip on crossings since Feb 28. Ceasefire has been violated for 144 consecutive days. Phase 2 of the ceasefire agreement quickly stalled. Humanitarian organizations struggle as border closures disrupt operations. More than 2 million Palestinians remain trapped.' },
 
-  { type: 'alert', category: 'humanitarian', region: '以色列', credibility: 'official', time: '2.5小時前', source: '以色列衛生部',
-    url: 'https://www.gov.il/en/departments/ministry_of_health/govil-landing-page',
-    title: '特拉維夫已有逾30萬市民疏散至南部避難所，醫院啟動戰時應急程序',
-    summary: '以色列政府宣布特拉維夫大都會區進入最高戒備狀態，命令距伊朗飛彈攻擊半徑內的30萬居民疏散。各大醫院啟動「大規模傷亡應急計畫」，緊急召回休假醫護人員並清空病床。邊界附近社區的50萬居民接獲疏散通知。以色列教育部宣布全國學校停課，要求學生留在防空設施附近。Red Magen David（以色列紅十字會相當機構）呼籲市民保持冷靜。' },
+  { type: 'normal', lang: 'en', category: 'military', region: '伊朗', credibility: 'official',
+    time: '3月8日', source: 'Al Jazeera',
+    url: 'https://www.aljazeera.net/news/liveblog/2026/3/6/%D8%A7%D9%84%D8%AD%D8%B1%D8%A8-%D8%B9%D9%84%D9%89-%D8%A5%D9%8A%D8%B1%D8%A7%D9%86-%D9%85%D8%A8%D8%A7%D8%B4%D8%B1-%D8%A7%D9%84%D8%AD%D8%B1%D8%A8-%D8%AA%D9%83%D9%85%D9%84',
+    title: '【EN】Day 8 live: Israel strikes Tehran oil tanks; Iran retaliates on Haifa refinery',
+    summary: 'Israel struck oil storage tanks in Tehran for the first time on Day 8, sending thick black smoke over the city. Iran retaliated by hitting the Haifa oil refinery in Israel. Mutual energy infrastructure attacks raised fears of broader humanitarian consequences. Both sides continued extensive missile and drone exchanges.' },
 
-  { type: 'normal', category: 'military', region: '伊朗', credibility: 'unofficial', time: '3小時前', source: 'Iran International',
-    url: 'https://www.iranintl.com/en/iran',
-    title: '伊朗境內社群媒體流傳德黑蘭市區爆炸畫面，官方尚未確認',
-    summary: '多個伊朗境內社群媒體帳號上傳疑似德黑蘭市區遭到攻擊的影像，顯示至少3處地點出現爆炸及火光。伊朗官方媒體對此保持沉默，革命衛隊發言人亦未回應提問。部分影片地理位置辨識顯示爆炸地點可能接近德黑蘭軍事基地，但無法獨立核實。此類來自社群媒體的未經驗證訊息應謹慎對待，建議等待官方說明。' },
+  { type: 'alert', lang: 'en', category: 'military', region: '伊朗', credibility: 'official',
+    time: '3月5日', source: 'Al Jazeera',
+    url: 'https://www.aljazeera.net/news/2026/3/5/%D8%A3%D9%85%D8%B1%D9%8A%D9%83%D8%A7-%D8%AA%D8%B6%D8%B9-%D8%A8%D9%86%D9%83-%D8%A3%D9%87%D8%AF%D8%A7%D9%81-%D8%AC%D8%AF%D9%8A%D8%AF%D8%A7',
+    title: '【EN】US sinks Iranian warship near Sri Lanka; 87 bodies recovered; new US target bank set',
+    summary: 'US Central Command announced the sinking of an Iranian warship off Sri Lanka. Sri Lanka police confirmed 87 bodies recovered from the targeted vessel. The US is building a new target bank aimed at destroying Iran's naval and missile capabilities to prevent threats to Hormuz Strait navigation. Strait remains functional but tense.' },
 
-  { type: 'normal', category: 'military', region: '伊朗', credibility: 'official', time: '3.5小時前', source: 'BBC News',
-    url: 'https://www.bbc.com/news/topics/c2vdnvyt2ppt/iran-nuclear-programme',
-    title: '以色列宣稱已摧毀伊朗Fordow地下核設施入口，伊方否認',
-    summary: '以色列軍事情報官員對外宣稱，使用美國提供的GBU-57「巨型穿地彈」炸毀Fordow地下核設施主要入口及通風系統，有效使該設施「至少三年」無法運作。伊朗方面斷然否認，稱Fordow設施建於山體內逾80公尺深處，現有武器無法穿透。獨立軍事分析師表示，Fordow設施實際損毀程度難以從外部核實，衛星圖像分析預計需要數日。' },
+  { type: 'normal', lang: 'en', category: 'military', region: '黎巴嫩', credibility: 'official',
+    time: '3月3日', source: 'Al Jazeera',
+    url: 'https://www.aljazeera.net/news/2026/3/2/%D8%A3%D8%A8%D8%B1%D8%B2-%D8%A3%D8%AD%D8%AF%D8%A7%D8%AB-%D8%A7%D9%84%D9%8A%D9%88%D9%85-%D8%A7%D9%84%D8%AB%D8%A7%D9%84%D8%AB-%D9%85%D9%86-%D8%A7%D9%84%D8%AD%D8%B1%D8%A8',
+    title: '【EN】Day 3: Israel assassinates Hezbollah intelligence chief in Beirut; 3 US jets downed by friendly fire in Kuwait',
+    summary: 'Day 3 saw hundreds of US-Israeli strikes on Iran, admission of 4 US soldiers killed. Three American jets were downed by Kuwaiti friendly fire. Iran's Revolutionary Guard declared closure of the Hormuz Strait. Israel also assassinated Hezbollah intelligence chief Hussein Meqlid in Beirut in a precise strike.' },
 
-  { type: 'alert', category: 'travel', region: '以色列', credibility: 'official', time: '4小時前', source: '中華民國外交部',
-    url: 'https://www.boca.gov.tw/sp-trwa-list-1.html',
-    title: '台灣外交部發布伊朗、以色列旅遊警示升至第三級：警告勿前往',
-    summary: '中華民國外交部領事事務局宣布，即日起將以色列及伊朗旅遊警示由第二級（提高警覺）升至第三級（警告勿前往）。外交部呼籲滯留當地台灣公民儘速撤離，並開設24小時緊急聯絡專線。據悉目前仍有約120名台灣公民在以色列境內，外交部正透過駐以代表處協助安排緊急撤離班機。伊朗境內台灣人數量較少，約有15名商務人士需要協助。' },
+  { type: 'normal', lang: 'en', category: 'humanitarian', region: '加薩', credibility: 'official',
+    time: '3月3日', source: 'Al Jazeera',
+    url: 'https://www.aljazeera.com/news/2026/3/3/un-chief-warns-of-israeli-made-humanitarian-crisis-in-gaza-amid-war-on-iran',
+    title: '【EN】UN chief warns of Israeli-made humanitarian crisis in Gaza; urges reopening of all crossings',
+    summary: 'UN Secretary-General Guterres called for Israel to reopen Gaza's border crossings closed since Feb 28 attacks on Iran. "It is imperative that all crossings be reopened as soon as possible," his spokesman said. UN partners have been forced to ration fuel and prioritize life-saving operations. Gaza is wholly dependent on fuel brought in by trucks.' },
 
-  { type: 'normal', category: 'military', region: '伊朗', credibility: 'unofficial', time: '5小時前', source: 'Iran International',
-    url: 'https://www.iranintl.com/en/iran/military',
-    title: '匿名伊朗軍方消息人士稱德黑蘭已準備第二波飛彈報復，未獲官方證實',
-    summary: '伊朗反對派媒體「伊朗國際」引述匿名伊朗革命衛隊消息人士，聲稱德黑蘭已準備好「第二波」更大規模的飛彈攻擊，目標將擴及以色列核電廠及重要基礎設施。此消息目前無法獨立核實，伊朗政府官方媒體未有相關報導。分析人士指出，此類「預告性威脅」可能旨在心理戰術，迫使以色列分散防空資源。建議持保留態度，等待可信官方消息來源確認。' },
+  { type: 'normal', lang: 'en', category: 'humanitarian', region: '加薩', credibility: 'official',
+    time: '3月1日', source: 'Al Jazeera',
+    url: 'https://www.aljazeera.com/news/2026/3/1/israel-closes-gazas-rafah-crossing-amid-attacks-on-iran',
+    title: '【EN】Israel closes Gaza's Rafah crossing amid Iran attacks; citing "necessary security adjustments"',
+    summary: 'Israel closed Gaza's Rafah border crossing with Egypt as it launched joint strikes on Iran with the US. Israeli military body COGAT said the closure would "have no impact on the humanitarian situation" but UN agencies strongly disputed this. Thousands of Palestinians needing urgent medical attention remain blocked from leaving.' },
 
-  { type: 'normal', category: 'military', region: '黎巴嫩', credibility: 'official', time: '5.5小時前', source: 'Al Jazeera',
-    url: 'https://www.aljazeera.com/tag/hezbollah/',
-    title: '黎巴嫩真主黨宣布對以色列北部發射火箭彈，響應伊朗',
-    summary: '黎巴嫩真主黨發表聲明，宣布向以色列北部城市海法及拿撒勒方向發射逾200枚火箭彈，稱此為「響應伊朗兄弟的抵抗行動」。以色列北方司令部確認偵測到攻擊並啟動防空系統，上加利利及戈蘭高地居民已進入防空洞。黎巴嫩南部與以色列邊境再現2023年停火前的緊張局面，聯合國黎巴嫩臨時部隊（UNIFIL）呼籲各方立即停火並保護平民。' },
+  // ── 中文 / Chinese ──
+  { type: 'breaking', lang: 'zh', category: 'military', region: '伊朗', credibility: 'official',
+    time: '3月10日', source: '中央社 CNA',
+    url: 'https://www.cna.com.tw/news/aopl/202603100007.aspx',
+    title: '【中】中東衝突第10日 川普稱軍事行動超前，伊朗戰爭「差不多」結束',
+    summary: '隨著中東衝突邁入第10天，美國總統川普今天接受CBS訪問時透露，美國與以色列對伊朗的戰爭可能很快結束，並稱軍事行動進展比原定計畫超前。伊朗仍持續對以色列發動飛彈攻擊，黎巴嫩也有零星交火。各方傷亡持續累積。' },
 
-  { type: 'normal', category: 'military', region: '加薩', credibility: 'official', time: '6小時前', source: 'Reuters',
-    url: 'https://www.reuters.com/site-search/?query=Gaza+Hamas+ground+offensive',
-    title: '加薩地面衝突持續，哈馬斯趁以伊戰爭宣稱發動新一輪攻勢',
-    summary: '哈馬斯軍事部門宣布趁以色列軍隊調兵應對伊朗威脅之際，在加薩北部發動反攻，聲稱重新奪回部分建築及街道。以色列國防軍（IDF）確認加薩城附近有交火，但否認哈馬斯取得重大突破。加薩衛生部報告過去24小時有27名平民在持續空炸中死亡。人道組織警告，以伊戰爭引發國際注意力轉移，可能使加薩人道物資供應更加艱難。' },
+  { type: 'alert', lang: 'zh', category: 'military', region: '伊朗', credibility: 'official',
+    time: '3月9日', source: '中央社 CNA',
+    url: 'https://www.cna.com.tw/news/aopl/202603090296.aspx',
+    title: '【中】駁以色列拖美國下水 專家：伊朗戰爭橫跨全球與區域兩層戰略',
+    summary: '部分人士主張是以色列將美國拖入當前伊朗戰爭，但美國「自由媒體」中東分析師古爾指出，這場戰爭同時存在全球與區域兩個層次，分別反映美國和以色列的戰略目標及利益。分析指出，伊朗長期作為美國的主要對手，美國有其獨立的戰略動機。' },
 
-  { type: 'normal', category: 'humanitarian', region: '伊朗', credibility: 'official', time: '8小時前', source: 'UN Security Council',
-    url: 'https://www.un.org/securitycouncil/content/resolutions-adopted-security-council',
-    title: '聯合國安理會緊急召開會議討論以伊戰爭，美英投票否決停火決議',
-    summary: '聯合國安理會召開緊急特別會議，中國及俄羅斯提交要求以色列及伊朗「立即停止一切軍事行動」的決議草案，並以12票贊成、2票棄權通過。然而美國及英國行使否決權，決議未能通過。聯合國秘書長呼籲雙方克制，表達對核設施可能受損引發輻射危機的深切憂慮。約旦、埃及、土耳其等阿拉伯國家聯合聲明要求立即停火，並召回駐以色列大使表達抗議。' },
+  { type: 'breaking', lang: 'zh', category: 'military', region: '伊朗', credibility: 'official',
+    time: '3月3日', source: '轉角國際 udn Global',
+    url: 'https://global.udn.com/global_vision/story/8662/9351944',
+    title: '【中】齋戒月「史詩怒火」突襲：美以聯合空襲伊朗，最高領袖哈米尼確定身亡',
+    summary: '美以在齋戒月首個工作日對伊朗發動代號「咆哮雄獅」空襲，攻擊包括核設施、指揮系統及德黑蘭安全基礎設施。最高領袖哈米尼確定身亡，伊朗政府指揮系統陷入混亂。伊朗紅新月會稱24個省遭到空襲，201人死亡、747人受傷，另有一所女子小學中彈，造成85人死亡。伊朗隨即向以色列及海灣美軍基地發射飛彈反擊。' },
 
-  { type: 'normal', category: 'aviation', region: '伊朗', credibility: 'official', time: '9小時前', source: 'Bloomberg',
-    url: 'https://www.bloomberg.com/energy?query=Iran+Hormuz+oil',
-    title: '中東石油價格急升18%，市場擔憂荷姆茲海峽遭封鎖',
-    summary: '國際油價在以伊衝突全面升級後急漲，布蘭特原油突破每桶120美元大關，為近四年來新高。市場最大擔憂在於伊朗可能封鎖荷姆茲海峽，每日約1,800萬桶石油（占全球供應量20%）途經此地。沙烏地阿拉伯及阿聯酋宣稱海峽目前仍然暢通，並表示已提高石油產量以穩定市場。分析師警告，若衝突持續，石油價格可能進一步攀升至每桶140-150美元。' },
+  { type: 'normal', lang: 'zh', category: 'military', region: '伊朗', credibility: 'official',
+    time: '3月4日', source: '聯合新聞網',
+    url: 'https://udn.com/news/story/6809/9356217',
+    title: '【中】從有限報復到全面大戰：伊朗衝突四劇本一次看懂',
+    summary: '《泰晤士報》拆解伊朗衝突四種走向：有限打擊後談判重啟、全面大戰爆發、代理人長期消耗戰、伊朗政權內部崩潰。以色列2月28日同時宣布無限期關閉所有通往加薩的過境點，暫停人道救援。加薩糧食僅夠維持1週，民眾搶購物資，分析師最擔憂荷莫茲海峽遭封鎖引爆更大危機。' },
 
-  { type: 'normal', category: 'military', region: '伊拉克', credibility: 'official', time: '11小時前', source: 'Reuters',
-    url: 'https://www.reuters.com/site-search/?query=Iraq+militia+drone+US+base',
-    title: '伊拉克親伊朗民兵宣布「加入戰鬥」，向美軍基地發射無人機',
-    summary: '伊拉克境內親伊朗武裝組織「伊斯蘭抵抗運動」宣布正式加入以伊衝突，向駐伊拉克美軍艾因阿薩德及哈里里空軍基地發射多架自殺式無人機。美軍確認成功攔截大部分無人機，有少數造成輕微設施受損，無人員傷亡。美國國務院召見伊拉克大使，警告伊拉克政府須約束境內武裝民兵。此舉引發外界憂慮衝突可能進一步擴大至伊拉克境內，影響該區域美軍部署。' },
+  { type: 'normal', lang: 'zh', category: 'military', region: '以色列', credibility: 'official',
+    time: '聯合報社論', source: '聯合新聞網',
+    url: 'https://udn.com/news/story/7338/8831708',
+    title: '【中】社論：以伊戰爭快速收場，但後遺症無窮',
+    summary: '以伊戰爭歷時12天後在美國主導下停火，但後遺症已現。美國轟炸前曾透過秘密管道知會伊朗，兩國行禮如儀。伊朗被摧毀的核設施中轉出的高濃縮鈾下落不明。法國批評美轟炸違反國際法，以色列被指藉戰爭轉移國際對加薩種族滅絕的關注。' },
+
+  { type: 'normal', lang: 'zh', category: 'military', region: '加薩', credibility: 'official',
+    time: '3月18日', source: '中央社 CNA',
+    url: 'https://www.cna.com.tw/news/aopl/202503180387.aspx',
+    title: '【中】以色列空襲加薩增至413死，加薩戰爭恐全面重啟',
+    summary: '以色列凌晨空襲加薩走廊各地，造成413名巴勒斯坦人喪生，哈馬斯稱死者包括數名政府首長。以軍同時命令加薩東部多個區域居民撤離，包括北部城鎮貝特漢諾，表明以色列正準備重新發動地面行動。白宮發言人表示以色列在空襲前曾徵詢華府並獲支持。' },
+
+  { type: 'normal', lang: 'zh', category: 'military', region: '加薩', credibility: 'official',
+    time: '以伊停火後', source: '中央社 CNA',
+    url: 'https://www.cna.com.tw/news/aopl/202506240189.aspx',
+    title: '【中】以色列伊朗清晨最後一波互轟後停火 12天衝突落幕',
+    summary: '以色列和伊朗接受美國總統川普提出的停火方案，終結歷時12天、撼動中東局勢的戰爭。伊朗清晨對以色列發動最後一波飛彈攻擊，造成至少4人喪生、8人受傷，以色列則在黎明前對伊朗多處發動空襲，隨後雙方接受停火提案。' },
+
+  // ── 阿拉伯文 / Arabic ──
+  { type: 'breaking', lang: 'ar', category: 'military', region: '伊朗', credibility: 'official',
+    time: '3月10日', source: 'الجزيرة（阿文）',
+    url: 'https://www.aljazeera.net/news/liveblog/2026/3/10/%D8%A7%D9%84%D8%AD%D8%B1%D8%A8-%D8%B9%D9%84%D9%89-%D8%A5%D9%8A%D8%B1%D8%A7%D9%86-%D9%85%D8%A8%D8%A7%D8%B4%D8%B1-%D8%AA%D8%B1%D9%85%D8%A8-%D9%8A%D8%AA%D8%AD%D8%AF%D8%AB-%D8%B9%D9%86',
+    title: '【阿】مباشر اليوم 11 – 3 موجات صاروخية إيرانية على وسط إسرائيل ووزير أمريكي يحذف منشوراً عن هرمز（第11天直播：3波飛彈攻擊以色列，美部長刪除荷姆茲帖文）',
+    summary: '伊朗第11天向以色列中部發動三波飛彈攻擊。美國能源部長發布關於荷姆茲海峽的帖文後被迫刪除。川普表示衝突「相當快」結束但本週不會。伊朗新最高領袖穆吉塔巴·哈梅尼的支持者在德黑蘭舉行大規模集會。' },
+
+  { type: 'breaking', lang: 'ar', category: 'military', region: '伊朗', credibility: 'official',
+    time: '2月28日', source: 'الجزيرة（阿文）',
+    url: 'https://www.aljazeera.net/news/2026/2/28/%D8%A2%D8%AE%D8%B1-%D8%AA%D8%B7%D9%88%D8%B1%D8%A7%D8%AA-%D8%A7%D9%84%D8%AD%D8%B1%D8%A8-%D8%A3%D9%83%D8%A8%D8%B1-%D8%BA%D8%A7%D8%B1%D8%A9-%D8%A5%D8%B3%D8%B1%D8%A7%D8%A6%D9%8A%D9%84%D9%8A%D8%A9',
+    title: '【阿】أكبر غارة بتاريخ الجو الإسرائيلي: 200 طائرة تستهدف 500 هدفاً في إيران（以空軍史上最大空襲：200架戰機攻擊伊朗500目標）',
+    summary: '以色列宣稱出動200架戰機攻擊伊朗500個目標，涵蓋防空系統及飛彈發射台。以色列防空警報響起528次。伊朗外長阿拉奇表示「這場戰爭是被迫的」，強調不放棄濃縮鈾的權利。美軍首次在實戰中使用自殺式無人機，並宣布4名士兵陣亡。' },
+
+  { type: 'alert', lang: 'ar', category: 'military', region: '伊朗', credibility: 'official',
+    time: '3月7日', source: 'الجزيرة（阿文）',
+    url: 'https://www.aljazeera.net/news/2026/3/7/7-%D8%A3%D9%8A%D8%A7%D9%85-%D9%85%D9%86-%D8%A7%D9%84%D8%AD%D8%B1%D8%A8-%D8%AA%D8%B3%D9%84%D8%B3%D9%84-%D8%B2%D9%85%D9%86%D9%8A-%D9%84%D8%B6%D8%B1%D8%A8%D8%A7%D8%AA',
+    title: '【阿】7 أيام من الحرب – تسلسل زمني لضربات غيّرت وجه المنطقة（7天戰爭時間軸：改變中東面貌的互攻行動）',
+    summary: '半島電視台梳理開戰7天時間軸：2月28日美以首波空襲德黑蘭，第三天美軍承認4人陣亡及科威特友軍誤擊事件，第五天美軍在斯里蘭卡附近擊沉伊朗護衛艦，第六天阿塞拜疆機場遭無人機攻擊（伊朗否認）。分析人士警告衝突可能演變為長期消耗戰。' },
+
+  { type: 'alert', lang: 'ar', category: 'military', region: '伊朗', credibility: 'official',
+    time: '3月7日', source: 'الجزيرة（阿文）',
+    url: 'https://www.aljazeera.net/news/2026/3/7/%D8%A8%D9%8A%D9%86-%D8%A7%D9%84%D8%B3%D9%8A%D8%B7%D8%B1%D8%A9-%D8%A7%D9%84%D8%AC%D9%88%D9%8A%D8%A9-%D9%88%D8%A7%D9%84%D8%A5%D8%B9%D9%85%D8%A7%D8%A1-%D9%87%D9%83%D8%B0%D8%A7-%D8%AA%D8%AF%D9%88%D8%B1',
+    title: '【阿】بين السيطرة الجوية والإعماء.. هكذا تدور الحرب بين أمريكا وإيران（空中優勢與盲化之間：美伊戰爭如何運作）',
+    summary: '分析指出美以攻擊著眼於摧毀伊朗飛彈力量，派遣Gerald Ford航母就是明證。分析師指伊朗聲稱可維持兩年戰爭，依靠飛彈生產能力及消耗戰略。伊朗降低打擊頻次是蓄力長期作戰的跡象。外界疑問：若伊朗設施都被摧毀，飛彈從何而來？揭示以色列心理戰宣傳本質。' },
+
+  { type: 'normal', lang: 'ar', category: 'military', region: '伊朗', credibility: 'official',
+    time: '3月5日', source: 'الجزيرة（阿文）',
+    url: 'https://www.aljazeera.net/politics/2026/3/5/%D9%85%D8%B9%D8%B1%D9%83%D8%A9-%D8%A7%D9%84%D8%B2%D9%85%D9%86-%D8%B3%D9%8A%D9%86%D8%A7%D8%B1%D9%8A%D9%88%D9%87%D8%A7%D8%AA-%D8%A5%D8%B3%D8%B1%D8%A7%D8%A6%D9%8A%D9%84-%D9%81%D9%8A-%D8%AD%D8%B1%D8%A8',
+    title: '【阿】معركة الزمن – سيناريوهات إسرائيل في حرب قد تطول مع إيران（時間的戰役：以色列面對長期戰爭的四種情境）',
+    summary: '半島電視台深度分析：伊朗聲稱可維持戰爭長達兩年，依靠飛彈生產能力。以色列雖具空中優勢，但每攔截一批伊朗飛彈就需耗費約10億謝克爾。以色列對軍事目標實施嚴格消息封鎖。分析指出衝突走向包括更廣泛升級或長期消耗戰。' },
+
+  { type: 'normal', lang: 'ar', category: 'military', region: '伊朗', credibility: 'official',
+    time: '3月4日', source: 'الجزيرة（阿文）',
+    url: 'https://www.aljazeera.net/news/2026/3/4/%D9%84%D9%85%D8%A7%D8%B0%D8%A7-%D8%AA%D8%AC%D9%84%D9%8A-%D8%A3%D9%85%D8%B1%D9%8A%D9%83%D8%A7-%D8%B1%D8%B9%D8%A7%D9%8A%D8%A7%D9%87%D8%A7-%D9%85%D9%86-%D8%A7%D9%84%D9%85%D9%86%D8%B7%D9%82%D8%A9',
+    title: '【阿】لماذا تُجلّي أمريكا رعاياها من المنطقة؟ وماذا حدث لقدرة إيران الصاروخية؟（美國為何撤僑？伊朗飛彈能力去哪了？）',
+    summary: '報告質疑以色列關於「伊朗所有設施已被摧毀」的敘述，稱其為心理戰工具，而非真實戰況。若伊朗已被完全摧毀，飛彈從何而來？分析指出，美國正在撤僑顯示局勢嚴峻，而伊朗的飛彈能力可能比以色列官方宣傳更為完整。' },
+
+  { type: 'normal', lang: 'ar', category: 'military', region: '伊朗', credibility: 'official',
+    time: '3月3日', source: 'الجزيرة（阿文）',
+    url: 'https://www.aljazeera.net/news/liveblog/2026/3/4/%D8%A7%D9%84%D8%AD%D8%B1%D8%A8-%D8%B9%D9%84%D9%89-%D8%A5%D9%8A%D8%B1%D8%A7%D9%86-%D9%85%D8%A8%D8%A7%D8%B4%D8%B1-%D9%87%D8%AC%D9%88%D9%85-%D8%B9%D9%84%D9%89',
+    title: '【阿】مباشر اليوم 6 – كثافة الضربات ترتفع وإيران تعلن الاستعداد لصد غزو بري（第6天直播：轟炸加劇，伊朗宣布準備抵禦地面入侵）',
+    summary: '第6天美以加強對伊朗境內打擊，同時以色列宣布刺殺真主黨情報首長。伊朗宣布準備抵禦美軍可能的地面入侵，並繼續向以色列及海灣美軍基地發射飛彈。以色列延長禁止人員聚集及學校停課令至3月7日。' },
 ];
 
 const conflictData = {
@@ -1190,6 +1273,7 @@ const countryData = {
 // ====== NEWS FILTER STATE ======
 let activeCat = 'all';
 let activeCountry = 'all';
+let activeLang = 'all';
 
 function filterCat(btn, cat) {
   activeCat = cat;
@@ -1203,11 +1287,18 @@ function filterCountry(btn, country) {
   btn.classList.add('active');
   renderNews();
 }
+function filterLang(btn, lang) {
+  activeLang = lang;
+  document.querySelectorAll('#langFilter .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderNews();
+}
 
 function renderNews() {
   let filtered = newsData;
   if (activeCat !== 'all') filtered = filtered.filter(n => n.category === activeCat);
   if (activeCountry !== 'all') filtered = filtered.filter(n => n.region === activeCountry);
+  if (activeLang !== 'all') filtered = filtered.filter(n => n.lang === activeLang);
   const list = document.getElementById('newsList');
   if (filtered.length === 0) {
     list.innerHTML = '<div style="padding:30px;text-align:center;color:var(--text-dim);font-size:12px">此篩選條件下無新聞</div>';
@@ -1222,6 +1313,7 @@ function renderNews() {
       <div class="news-meta">
         <span class="news-time">${n.time}</span>
         <span class="news-source">${n.source}</span>
+        <span class="news-lang-badge lang-${n.lang || 'en'}">${n.lang === 'ar' ? '阿文' : n.lang === 'zh' ? '中文' : 'EN'}</span>
         <span class="news-region" onclick="event.preventDefault();event.stopPropagation();quickFilterCountry('${n.region}')">${n.region}</span>
         <span class="news-credibility ${n.credibility === 'official' ? 'cred-official' : 'cred-unofficial'}">${n.credibility === 'official' ? '✓ 官方消息' : '◎ 非官方'}</span>
         <span class="news-link-icon">↗</span>
