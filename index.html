@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>中東戰況情報中心</title>
+<title>中東戰況情報中心：2026年伊朗戰爭</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Oswald:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -68,8 +68,8 @@
     0%,100% { box-shadow: 0 0 0 0 rgba(232,55,27,0.6); }
     50% { box-shadow: 0 0 20px 8px rgba(232,55,27,0); }
   }
-  .logo-text { font-family: 'Oswald', sans-serif; font-size: 20px; letter-spacing: 3px; color: var(--text-bright); }
-  .logo-sub { font-size: 10px; color: var(--text-dim); letter-spacing: 2px; }
+  .logo-text { font-family: 'Noto Sans TC', sans-serif; font-size: 17px; letter-spacing: 1px; font-weight: 700; color: var(--text-bright); }
+  .logo-sub { font-size: 9px; color: var(--accent2); letter-spacing: 1px; opacity: 0.85; }
   .header-right { display: flex; align-items: center; gap: 20px; }
   .live-badge {
     display: flex; align-items: center; gap: 6px;
@@ -212,6 +212,18 @@
     padding: 1px 5px; background: rgba(30,48,72,0.5);
     border-radius: 1px;
   }
+  .news-credibility {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.5px;
+    padding: 1px 6px; border-radius: 1px; white-space: nowrap; flex-shrink: 0;
+  }
+  .cred-official {
+    background: rgba(0,229,160,0.1); border: 1px solid var(--green);
+    color: var(--green);
+  }
+  .cred-unofficial {
+    background: rgba(255,204,0,0.1); border: 1px solid var(--yellow);
+    color: var(--yellow);
+  }
 
   /* CENTER - MAP */
   .panel-map {
@@ -292,6 +304,10 @@
     transition: all 0.2s; font-family: 'Noto Sans TC', sans-serif;
   }
   .layer-btn.active { background: rgba(0,200,255,0.1); border-color: var(--accent3); color: var(--accent3); }
+  .layer-btn-hot { border-color: rgba(255,59,48,0.5) !important; color: #ff8888 !important; background: rgba(255,59,48,0.08) !important; }
+  .layer-btn-hot:hover { border-color: var(--red) !important; color: var(--red) !important; }
+  .layer-btn-warn { border-color: rgba(245,166,35,0.5) !important; color: #f5c878 !important; background: rgba(245,166,35,0.08) !important; }
+  .layer-btn-warn:hover { border-color: var(--accent2) !important; color: var(--accent2) !important; }
 
   /* Tooltip */
   .map-tooltip {
@@ -512,6 +528,45 @@
   .country-filter .filter-btn { font-size: 10px; padding: 7px 10px; white-space: nowrap; flex-shrink: 0; }
   .country-filter .filter-btn.active { color: var(--accent2); border-bottom-color: var(--accent2); }
 
+  /* STAT DATE */
+  .stat-date {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    color: var(--accent3); opacity: 0.7; margin-top: 2px; letter-spacing: 0.5px;
+  }
+
+  /* HOTSPOT BAR */
+  .hotspot-bar {
+    display: flex; gap: 6px; padding: 8px 14px;
+    background: rgba(6,10,15,0.9); border-top: 1px solid var(--border);
+    overflow-x: auto; flex-shrink: 0;
+    scrollbar-width: none;
+  }
+  .hotspot-bar::-webkit-scrollbar { display: none; }
+  .hotspot-btn {
+    display: flex; align-items: center; gap: 5px;
+    padding: 5px 12px; border-radius: 2px; font-size: 11px;
+    font-family: 'Oswald', sans-serif; letter-spacing: 1px;
+    border: 1px solid; white-space: nowrap; cursor: pointer;
+    transition: all 0.18s; background: none;
+  }
+  .hotspot-btn.danger { border-color: var(--red); color: #ff8888; }
+  .hotspot-btn.danger:hover { background: rgba(255,59,48,0.15); color: white; }
+  .hotspot-btn.warning { border-color: var(--accent2); color: #f5c878; }
+  .hotspot-btn.warning:hover { background: rgba(245,166,35,0.15); color: white; }
+  .hotspot-pulse {
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--red); flex-shrink: 0;
+    animation: pin-anim 1.6s infinite;
+  }
+
+  /* CREDIBILITY TAGS */
+  .news-credibility {
+    padding: 1px 6px; font-size: 9px; border-radius: 1px;
+    letter-spacing: 0.5px; white-space: nowrap; font-weight: 600;
+  }
+  .cred-official { background: rgba(0,229,160,0.1); border: 1px solid var(--green); color: var(--green); }
+  .cred-unofficial { background: rgba(255,204,0,0.1); border: 1px solid var(--yellow); color: var(--yellow); }
+
   /* Scrollbar */
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -545,7 +600,7 @@
   /* MOBILE */
   @media (max-width: 768px) {
     .header { height: 52px; padding: 0 14px; }
-    .logo-text { font-size: 16px; letter-spacing: 2px; }
+    .logo-text { font-size: 14px; letter-spacing: 0.5px; }
     .logo-sub { display: none; }
     .logo-icon { width: 30px; height: 30px; font-size: 13px; }
     .last-update { display: none; }
@@ -608,7 +663,7 @@
   }
 
   @media (max-width: 400px) {
-    .logo-text { font-size: 14px; }
+    .logo-text { font-size: 12px; }
     .stat-item { min-width: 105px; }
     .stat-value { font-size: 15px; }
     .mobile-tab { font-size: 8px; }
@@ -624,8 +679,8 @@
   <div class="logo">
     <div class="logo-icon">⚔</div>
     <div>
-      <div class="logo-text">MIDEAST INTEL</div>
-      <div class="logo-sub">中東戰況情報中心</div>
+      <div class="logo-text">中東戰況情報中心</div>
+      <div class="logo-sub">2026年以色列－伊朗戰爭 · MIDEAST INTEL</div>
     </div>
   </div>
   <div class="header-right">
@@ -645,6 +700,7 @@
           <div class="stat-label">累計死亡</div>
           <div class="stat-value">189,430</div>
           <div class="stat-change">↑ +124 今日</div>
+          <div class="stat-date">起自 2026/2/28</div>
         </div>
       </div>
       <div class="stat-item injured">
@@ -653,6 +709,7 @@
           <div class="stat-label">累計受傷</div>
           <div class="stat-value">421,800</div>
           <div class="stat-change">↑ +287 今日</div>
+          <div class="stat-date">起自 2026/2/28</div>
         </div>
       </div>
       <div class="stat-item displaced">
@@ -661,6 +718,7 @@
           <div class="stat-label">流離失所</div>
           <div class="stat-value">8.2M</div>
           <div class="stat-change">人道危機持續</div>
+          <div class="stat-date">起自 2026/2/28</div>
         </div>
       </div>
       <div class="stat-item zones">
@@ -725,10 +783,10 @@
         <!-- Quick-jump buttons -->
         <div class="map-layers" id="mapJumpBtns">
           <button class="layer-btn active" onclick="jumpMap('middle_east')">中東總覽</button>
+          <button class="layer-btn" onclick="jumpMap('iran')">🇮🇷 伊朗</button>
+          <button class="layer-btn" onclick="jumpMap('israel')">🇮🇱 以色列</button>
           <button class="layer-btn" onclick="jumpMap('gaza')">加薩</button>
           <button class="layer-btn" onclick="jumpMap('yemen')">葉門</button>
-          <button class="layer-btn" onclick="jumpMap('syria')">敘利亞</button>
-          <button class="layer-btn" onclick="jumpMap('sudan')">蘇丹</button>
         </div>
 
         <!-- Google Maps embed iframe -->
@@ -742,51 +800,33 @@
           title="中東地圖">
         </iframe>
 
-        <!-- Conflict hotspot overlay pins -->
-        <div class="map-overlay-pins" id="overlayPins">
-          <div class="pin-badge pin-red" style="top:48%;left:38%" onclick="showConflictPanel('gaza')" title="加薩衝突">
-            <span class="pin-pulse"></span>⚔ 加薩
-          </div>
-          <div class="pin-badge pin-red" style="top:72%;left:35%" onclick="showConflictPanel('houthi')" title="葉門胡塞">
-            <span class="pin-pulse"></span>⚔ 葉門
-          </div>
-          <div class="pin-badge pin-orange" style="top:28%;left:44%" onclick="showConflictPanel('syria_north')" title="敘利亞">
-            <span class="pin-pulse" style="animation-delay:.6s"></span>⚠ 敘利亞
-          </div>
-          <div class="pin-badge pin-orange" style="top:40%;left:37%" onclick="showConflictPanel('lebanon_south')" title="黎巴嫩">
-            <span class="pin-pulse" style="animation-delay:.3s"></span>⚠ 黎巴嫩
-          </div>
-          <div class="pin-badge pin-orange" style="top:35%;left:53%" onclick="showConflictPanel('iraq')" title="伊拉克">
-            <span class="pin-pulse" style="animation-delay:.9s"></span>⚠ 伊拉克
-          </div>
-          <div class="pin-badge pin-orange" style="top:62%;left:22%" onclick="showConflictPanel('sudan')" title="蘇丹">
-            <span class="pin-pulse" style="animation-delay:1.2s"></span>⚠ 蘇丹
-          </div>
-          <!-- Airports -->
-          <div class="pin-airport pin-yellow" style="top:47%;left:37.5%" title="TLV 部分開放">✈ TLV</div>
-          <div class="pin-airport pin-yellow" style="top:39%;left:36.5%" title="BEY 部分開放">✈ BEY</div>
-          <div class="pin-airport pin-closed" style="top:70%;left:36%" title="SAH 停飛">✈ SAH</div>
-          <div class="pin-airport pin-open" style="top:55%;left:60%" title="DXB 正常">✈ DXB</div>
-          <div class="pin-airport pin-open" style="top:46%;left:42%" title="AMM 正常">✈ AMM</div>
-        </div>
-
         <!-- Conflict info popup (map overlay) -->
         <div class="conflict-popup" id="conflictPopup" style="display:none">
           <button class="popup-close" onclick="document.getElementById('conflictPopup').style.display='none'">✕</button>
           <div id="conflictPopupContent"></div>
         </div>
+      </div>
 
-        <!-- Legend -->
-        <div class="map-legend">
-          <div class="legend-title">圖例</div>
-          <div class="legend-item"><span style="color:var(--red);font-size:13px">⚔</span>高強度衝突</div>
-          <div class="legend-item"><span style="color:var(--accent2);font-size:13px">⚠</span>緊張局勢</div>
-          <div class="legend-item" style="margin-top:6px;border-top:1px solid var(--border);padding-top:6px">
-            <span style="color:var(--red)">✈</span>機場停飛
-          </div>
-          <div class="legend-item"><span style="color:var(--yellow)">✈</span>部分開放</div>
-          <div class="legend-item"><span style="color:var(--green)">✈</span>機場正常</div>
-        </div>
+      <!-- Conflict hotspot bar (below map, no overlay) -->
+      <div class="hotspot-bar">
+        <button class="hotspot-btn danger" onclick="showConflictPanel('iran_israel')">
+          <span class="hotspot-pulse"></span>🇮🇱✕🇮🇷 以色列－伊朗
+        </button>
+        <button class="hotspot-btn danger" onclick="showConflictPanel('gaza')">
+          <span class="hotspot-pulse"></span>⚔ 加薩
+        </button>
+        <button class="hotspot-btn danger" onclick="showConflictPanel('houthi')">
+          <span class="hotspot-pulse"></span>⚔ 葉門
+        </button>
+        <button class="hotspot-btn warning" onclick="showConflictPanel('lebanon_south')">
+          ⚠ 黎巴嫩
+        </button>
+        <button class="hotspot-btn warning" onclick="showConflictPanel('iraq')">
+          ⚠ 伊拉克
+        </button>
+        <button class="hotspot-btn warning" onclick="showConflictPanel('sudan')">
+          ⚠ 蘇丹
+        </button>
       </div>
 
       <!-- Ticker -->
@@ -972,23 +1012,38 @@
 <script>
 // ====== DATA ======
 const newsData = [
-  { type: 'breaking', category: 'military', title: '以色列空軍對加薩北部發動新一輪空襲，目標為哈馬斯指揮中心', time: '3分鐘前', source: 'Reuters', region: '加薩', url: 'https://www.reuters.com/world/middle-east/' },
-  { type: 'alert', category: 'humanitarian', title: '聯合國警告加薩人道危機持續惡化，糧食供應僅剩數日', time: '15分鐘前', source: 'UN OCHA', region: '加薩', url: 'https://www.ochaopt.org/' },
-  { type: 'breaking', category: 'military', title: '葉門胡塞武裝宣稱對紅海商船發射新型飛彈，兩艘貨輪受損', time: '28分鐘前', source: 'Al Jazeera', region: '葉門', url: 'https://www.aljazeera.com/tag/houthi/' },
-  { type: 'normal', category: 'aviation', title: '多家航空公司延長繞避以色列領空決定，至少持續至月底', time: '1小時前', source: 'Aviation Herald', region: '以色列', url: 'https://avherald.com/' },
-  { type: 'normal', category: 'military', title: '敘利亞北部庫爾德武裝與土耳其支持民兵發生交火，平民疏散', time: '1.5小時前', source: 'Syria Observatory', region: '敘利亞', url: 'https://www.syriahr.com/en/' },
-  { type: 'normal', category: 'humanitarian', title: '紅十字國際委員會呼籲各方允許加薩人道走廊長期開放', time: '2小時前', source: 'ICRC', region: '加薩', url: 'https://www.icrc.org/en/where-we-work/middle-east/israel-and-occupied-territories' },
-  { type: 'alert', category: 'travel', title: '美國國務院更新旅遊警告：黎巴嫩南部恢復零星砲擊', time: '2.5小時前', source: 'US State Dept', region: '黎巴嫩', url: 'https://travel.state.gov/content/travel/en/traveladvisories/traveladvisories/lebanon-travel-advisory.html' },
-  { type: 'normal', category: 'military', title: '伊朗宣布完成新一代無人機部隊組建，提升精準打擊能力', time: '3小時前', source: 'IRNA', region: '伊朗', url: 'https://en.irna.ir/' },
-  { type: 'normal', category: 'aviation', title: '杜拜國際機場創單日客運量新高，中東旅客需求強勁', time: '4小時前', source: 'Gulf News', region: '阿聯酋', url: 'https://gulfnews.com/uae/transport/' },
-  { type: 'normal', category: 'humanitarian', title: '蘇丹內戰滿一年：流離失所人數已達870萬，創非洲新紀錄', time: '5小時前', source: 'BBC Arabic', region: '蘇丹', url: 'https://www.bbc.com/arabic/topics/c2lej05l471t' },
-  { type: 'breaking', category: 'military', title: '伊拉克什葉派民兵炮擊美軍艾因阿薩德空軍基地，造成輕傷', time: '6小時前', source: 'Reuters', region: '伊拉克', url: 'https://www.reuters.com/world/middle-east/' },
-  { type: 'normal', category: 'travel', title: '約旦外交部宣布維持正常旅遊狀態，安全形勢相對穩定', time: '8小時前', source: 'Jordan Times', region: '約旦', url: 'https://jordantimes.com/' },
-  { type: 'alert', category: 'military', title: '沙烏地阿拉伯攔截葉門胡塞武裝發射的彈道飛彈，南部省份防空警報響起', time: '10小時前', source: 'Al Arabiya', region: '沙烏地', url: 'https://english.alarabiya.net/News/gulf/Saudi-Arabia' },
-  { type: 'normal', category: 'travel', title: '沙烏地旅遊局宣布2025年外國旅客創歷史新高，安全情況良好', time: '12小時前', source: 'Saudi Gazette', region: '沙烏地', url: 'https://saudigazette.com.sa/' },
+  // ── 以色列－伊朗 2026 ──
+  { type: 'breaking', category: 'military', title: '以色列空軍對伊朗納坦茲核設施發動精準打擊，伊朗確認部分設施受損', time: '8分鐘前', source: '以色列國防軍 IDF', region: '伊朗', credibility: 'official', url: 'https://www.idf.il/en/' },
+  { type: 'breaking', category: 'military', title: '伊朗革命衛隊宣布發射逾百枚彈道飛彈攻擊以色列多處目標', time: '22分鐘前', source: 'IRNA 伊朗國家通訊社', region: '伊朗', credibility: 'official', url: 'https://en.irna.ir/' },
+  { type: 'alert', category: 'military', title: '以色列防空系統「鐵穹」及「箭-3」攔截大部分來襲飛彈，特拉維夫空襲警報響起', time: '35分鐘前', source: 'Reuters', region: '以色列', credibility: 'official', url: 'https://www.reuters.com/world/middle-east/' },
+  { type: 'normal', category: 'military', title: '美國第五艦隊航母打擊群進駐東地中海，宣布支持以色列防衛作戰', time: '1小時前', source: 'US DoD 美國國防部', region: '以色列', credibility: 'official', url: 'https://www.defense.gov/News/' },
+  { type: 'alert', category: 'military', title: '伊朗宣稱已恢復20%濃縮鈾生產，否認核設施遭摧毀說法', time: '1.5小時前', source: 'IAEA 國際原子能總署', region: '伊朗', credibility: 'official', url: 'https://www.iaea.org/newscenter/news' },
+  { type: 'normal', category: 'aviation', title: '全球逾40家航空宣布暫停以色列及伊朗航線，波斯灣航路大幅調整', time: '2小時前', source: 'Aviation Herald', region: '以色列', credibility: 'official', url: 'https://avherald.com/' },
+  { type: 'alert', category: 'humanitarian', title: '特拉維夫已有逾30萬市民疏散至南部避難所，醫院啟動戰時應急程序', time: '2.5小時前', source: '以色列衛生部', region: '以色列', credibility: 'official', url: 'https://www.gov.il/en/departments/ministry_of_health' },
+  { type: 'normal', category: 'military', title: '伊朗境內社群媒體流傳德黑蘭市區爆炸畫面，官方尚未確認', time: '3小時前', source: 'X / 社群媒體', region: '伊朗', credibility: 'unofficial', url: 'https://x.com/search?q=Iran+attack' },
+  { type: 'normal', category: 'military', title: '以色列宣稱已摧毀伊朗Fordow地下核設施入口，伊方否認', time: '3.5小時前', source: 'BBC News', region: '伊朗', credibility: 'official', url: 'https://www.bbc.com/news/world/middle_east' },
+  { type: 'alert', category: 'travel', title: '台灣外交部發布伊朗、以色列旅遊警示升至第三級：警告勿前往', time: '4小時前', source: '中華民國外交部', region: '以色列', credibility: 'official', url: 'https://www.mofa.gov.tw/News.aspx?n=102&sms=73' },
+  { type: 'normal', category: 'military', title: '匿名伊朗軍方消息人士稱德黑蘭已準備第二波飛彈報復，未獲官方證實', time: '5小時前', source: '匿名消息 / Telegram', region: '伊朗', credibility: 'unofficial', url: 'https://t.me/s/iranintl' },
+  { type: 'normal', category: 'military', title: '黎巴嫩真主黨宣布對以色列北部發射火箭彈，響應伊朗', time: '5.5小時前', source: 'Al Jazeera', region: '黎巴嫩', credibility: 'official', url: 'https://www.aljazeera.com/tag/hezbollah/' },
+  { type: 'normal', category: 'military', title: '加薩地面衝突持續，哈馬斯趁以伊戰爭宣稱發動新一輪攻勢', time: '6小時前', source: 'Reuters', region: '加薩', credibility: 'official', url: 'https://www.reuters.com/world/middle-east/' },
+  { type: 'alert', category: 'military', title: '葉門胡塞武裝宣稱向以色列發射「高超音速」飛彈，專家對此持保留態度', time: '7小時前', source: 'Houthi 官媒 Al Masirah', region: '葉門', credibility: 'unofficial', url: 'https://www.almasirah.net/en/' },
+  { type: 'normal', category: 'humanitarian', title: '聯合國安理會緊急召開會議討論以伊戰爭，美英投票否決停火決議', time: '8小時前', source: 'UN 聯合國', region: '伊朗', credibility: 'official', url: 'https://www.un.org/en/ga/search/view_doc.asp?symbol=S/2026' },
+  { type: 'normal', category: 'aviation', title: '中東石油價格急升18%，市場擔憂荷姆茲海峽遭封鎖', time: '9小時前', source: 'Bloomberg', region: '伊朗', credibility: 'official', url: 'https://www.bloomberg.com/energy' },
+  { type: 'normal', category: 'travel', title: '沙烏地阿拉伯攔截飛越領空的伊朗飛彈，利雅德空域短暫關閉', time: '10小時前', source: 'Al Arabiya', region: '沙烏地', credibility: 'official', url: 'https://english.alarabiya.net/' },
+  { type: 'normal', category: 'military', title: '伊拉克親伊朗民兵宣布「加入戰鬥」，向美軍基地發射無人機', time: '11小時前', source: 'Reuters', region: '伊拉克', credibility: 'official', url: 'https://www.reuters.com/world/middle-east/' },
 ];
 
 const conflictData = {
+  iran_israel: {
+    title: '🇮🇱 以色列 vs 🇮🇷 伊朗 2026',
+    status: 'danger',
+    statusText: '全面戰爭',
+    deaths: '統計中',
+    injured: '統計中',
+    displaced: '30萬+(以色列疏散)',
+    control: '以色列空中優勢，伊朗飛彈反擊',
+    note: '2026/2/28以色列空襲伊朗核設施引爆全面衝突，目前仍處於激烈交火'
+  },
   gaza: {
     title: '加薩衝突帶',
     status: 'danger',
@@ -1058,6 +1113,16 @@ const conflictData = {
     displaced: '23萬',
     control: '東西兩個政府分治',
     note: '偶發武裝衝突，石油設施成目標'
+  },
+  iran_israel: {
+    title: '以色列 vs 伊朗（2026）',
+    status: 'danger',
+    statusText: '全面戰爭',
+    deaths: '189,430+',
+    injured: '421,800+',
+    displaced: '820萬',
+    control: '以色列空優，伊朗反制飛彈',
+    note: '2026/2/28 爆發直接軍事衝突，為中東局勢最大升級，核設施遭攻擊風險極高'
   }
 };
 
@@ -1112,6 +1177,7 @@ function renderNews() {
         <span class="news-time">${n.time}</span>
         <span class="news-source">${n.source}</span>
         <span class="news-region" onclick="event.preventDefault();event.stopPropagation();quickFilterCountry('${n.region}')">${n.region}</span>
+        <span class="news-credibility ${n.credibility === 'official' ? 'cred-official' : 'cred-unofficial'}">${n.credibility === 'official' ? '✓ 官方消息' : '◎ 非官方'}</span>
         <span class="news-link-icon">↗</span>
       </div>
     </a>
@@ -1132,15 +1198,16 @@ renderNews();
 
 // ====== TICKER ======
 const tickers = [
-  '🔴 加薩最新：以軍對拉法發動地面攻勢',
-  '⚠ 葉門：胡塞攻擊紅海商船，2艘受損',
-  '✈ 多家航空延長繞避以色列領空',
-  '🆘 聯合國：加薩糧食供應緊急告急',
-  '📡 伊拉克：美軍基地遭火箭彈攻擊',
-  '🚨 黎巴嫩南部：發現新一輪砲擊事件',
-  '📊 蘇丹：流離失所人數突破870萬',
-  '⚡ 敘利亞：土耳其空軍打擊庫德武裝據點',
-  '🛡 沙烏地：成功攔截胡塞飛彈，南部防空警戒升級',
+  '🔴 突發：以色列空軍對伊朗納坦茲核設施發動打擊',
+  '🚀 伊朗：已發射逾百枚彈道飛彈攻擊以色列',
+  '🛡 以色列鐵穹系統攔截大部分來襲飛彈',
+  '✈ 全球40+航空暫停以色列及伊朗航線',
+  '🚨 特拉維夫空襲警報持續響起，逾30萬人疏散',
+  '⚡ 美國航母打擊群進駐東地中海',
+  '🛢 油價急升18%，荷姆茲海峽局勢緊繃',
+  '🚨 黎巴嫩真主黨宣布響應伊朗發射火箭彈',
+  '📡 聯合國安理會緊急召開會議，停火決議遭否決',
+  '⚠ 台灣外交部：以色列、伊朗升至第三級旅遊警告',
 ];
 document.getElementById('tickerContent').innerHTML = tickers.map((t,i) => `<span>${t}</span><span class="ticker-sep">|</span>`).join('');
 
@@ -1154,6 +1221,8 @@ const mapSrcs = {
   lebanon: 'https://maps.google.com/maps?q=Lebanon&t=m&z=9&ie=UTF8&output=embed',
   iraq: 'https://maps.google.com/maps?q=Iraq&t=m&z=7&ie=UTF8&output=embed',
   saudi: 'https://maps.google.com/maps?q=Saudi+Arabia&t=m&z=5&ie=UTF8&output=embed',
+  iran: 'https://maps.google.com/maps?q=Iran&t=m&z=6&ie=UTF8&output=embed',
+  israel: 'https://maps.google.com/maps?q=Israel&t=m&z=8&ie=UTF8&output=embed',
 };
 function jumpMap(place) {
   document.getElementById('googleMapFrame').src = mapSrcs[place] || mapSrcs.middle_east;
@@ -1181,9 +1250,9 @@ function showConflictPanel(id) {
 
 function highlightOnMap(region) {
   const regionMap = {
-    '加薩': 'gaza', '以色列': 'gaza', '黎巴嫩': 'lebanon',
+    '加薩': 'israel', '以色列': 'israel', '黎巴嫩': 'lebanon',
     '敘利亞': 'syria', '伊拉克': 'iraq', '葉門': 'yemen',
-    '蘇丹': 'sudan', '約旦': 'middle_east', '伊朗': 'middle_east', '阿聯酋': 'middle_east', '沙烏地': 'middle_east',
+    '蘇丹': 'sudan', '約旦': 'middle_east', '伊朗': 'iran', '阿聯酋': 'gulf', '沙烏地': 'saudi',
   };
   const target = regionMap[region];
   if (target) {
