@@ -985,68 +985,85 @@
 <!-- Tooltip for conflicts/airports -->
 <script>
 // ====== DATA ======
+// 注意：以下新聞為2026年假設性衝突情境，連結指向各媒體對應主題的搜尋/專題頁面
 const newsData = [
-  { type: 'breaking', category: 'military', region: '伊朗', credibility: 'official', time: '8分鐘前', source: '以色列國防軍 IDF', url: 'https://www.idf.il/en/',
+  { type: 'breaking', category: 'military', region: '伊朗', credibility: 'official', time: '8分鐘前', source: '以色列國防軍 IDF',
+    url: 'https://www.idf.il/en/mini-sites/wars-and-operations/iron-swords-war/',
     title: '以色列空軍對伊朗納坦茲核設施發動精準打擊，伊朗確認部分設施受損',
     summary: '以色列國防軍（IDF）確認對伊朗納坦茲鈾濃縮設施發動代號「上帝之手」空襲行動，出動逾30架F-35I隱身戰機。攻擊目標包含地上離心機廠房及地下儲存區。伊朗官方承認部分地表設施受損，但聲稱核心地下設施完好無缺。國際原子能總署（IAEA）已派員前往核查，並呼籲各方克制。此次打擊被認為是2026年以色列—伊朗衝突的引爆點。' },
 
-  { type: 'breaking', category: 'military', region: '伊朗', credibility: 'official', time: '22分鐘前', source: 'IRNA 伊朗國家通訊社', url: 'https://en.irna.ir/',
+  { type: 'breaking', category: 'military', region: '伊朗', credibility: 'official', time: '22分鐘前', source: 'IRNA 伊朗國家通訊社',
+    url: 'https://en.irna.ir/search/?q=Israel+attack',
     title: '伊朗革命衛隊宣布發射逾百枚彈道飛彈攻擊以色列多處目標',
     summary: '伊朗伊斯蘭革命衛隊（IRGC）宣布代號「真誠承諾III」報復行動，向以色列境內發射120枚以上Shahab-3及Emad彈道飛彈。攻擊目標涵蓋特拉維夫、海法、內格夫沙漠的軍事基地。伊朗官方媒體稱多個目標被命中，以色列方面正進行損失評估。此為伊朗迄今對以色列規模最大的直接軍事打擊，標誌兩國進入全面戰爭狀態。' },
 
-  { type: 'alert', category: 'military', region: '以色列', credibility: 'official', time: '35分鐘前', source: 'Reuters', url: 'https://www.reuters.com/world/middle-east/',
+  { type: 'alert', category: 'military', region: '以色列', credibility: 'official', time: '35分鐘前', source: 'Reuters',
+    url: 'https://www.reuters.com/site-search/?query=Israel+Iran+missile+iron+dome',
     title: '以色列防空系統「鐵穹」及「箭-3」攔截大部分來襲飛彈，特拉維夫空襲警報響起',
     summary: '以色列多層次防空系統成功攔截約85%來襲飛彈。「箭-3」系統負責高空攔截彈道飛彈，「大衛彈弓」攔截中程威脅，「鐵穹」則處理低空火箭彈。特拉維夫、耶路撒冷及海法響起空襲警報，市民緊急進入防空洞。部分飛彈穿透防線，造成特拉維夫南郊及內蓋夫地區建築受損，以色列官方公布有平民傷亡。美軍USS艾森豪號航母戰鬥群亦協助攔截部分威脅。' },
 
-  { type: 'normal', category: 'military', region: '以色列', credibility: 'official', time: '1小時前', source: 'US DoD 美國國防部', url: 'https://www.defense.gov/News/',
+  { type: 'normal', category: 'military', region: '以色列', credibility: 'official', time: '1小時前', source: 'US DoD 美國國防部',
+    url: 'https://www.defense.gov/News/News-Stories/?query=carrier+strike+group+Mediterranean',
     title: '美國第五艦隊航母打擊群進駐東地中海，宣布支持以色列防衛作戰',
     summary: '美國國防部長宣布，USS杜魯門號（CVN-75）航母打擊群已部署至東地中海，作為對以色列安全承諾的具體表現。航母戰鬥群攜帶多艘驅逐艦及潛艦，具備攔截彈道飛彈能力。白宮聲明美國「全力支持以色列自衛權」，但同時呼籲雙方避免衝突進一步升級。美方明確表示不會主動攻擊伊朗境內目標，但將協防以色列免遭飛彈攻擊。' },
 
-  { type: 'alert', category: 'military', region: '伊朗', credibility: 'official', time: '1.5小時前', source: 'IAEA 國際原子能總署', url: 'https://www.iaea.org/newscenter/news',
+  { type: 'alert', category: 'military', region: '伊朗', credibility: 'official', time: '1.5小時前', source: 'IAEA 國際原子能總署',
+    url: 'https://www.iaea.org/topics/iran-and-the-iaea',
     title: '伊朗宣稱已恢復20%濃縮鈾生產，否認核設施遭摧毀說法',
     summary: '伊朗原子能組織（AEOI）召開緊急記者會，聲稱納坦茲設施「核心功能完好」，並宣布已將鈾濃縮純度提升至20%。伊朗官員警告，若再遭攻擊將考慮退出《核不擴散條約》（NPT）並驅逐IAEA核查員。IAEA總幹事表示無法立即核實伊朗聲明，並強調輻射監測數據顯示納坦茲周邊有異常讀數。美國及歐盟對伊朗威脅表示「嚴重關切」。' },
 
-  { type: 'normal', category: 'aviation', region: '以色列', credibility: 'official', time: '2小時前', source: 'Aviation Herald', url: 'https://avherald.com/',
+  { type: 'normal', category: 'aviation', region: '以色列', credibility: 'official', time: '2小時前', source: 'Aviation Herald',
+    url: 'https://avherald.com/h?search=Israel',
     title: '全球逾40家航空宣布暫停以色列及伊朗航線，波斯灣航路大幅調整',
     summary: '歐洲主要航空公司包括漢莎、法航、英航、荷蘭皇家航空已全面暫停飛往特拉維夫本-古里安機場的航班，停飛至少持續至月底。多家航空公司同時取消德黑蘭航線，並調整波斯灣區域飛行計畫，避免進入伊朗及以色列領空。受航路繞行影響，飛往亞洲及澳洲的班機延誤達3-5小時。油價飆升亦推高燃油附加費，預計旅客機票成本上漲15-25%。' },
 
-  { type: 'alert', category: 'humanitarian', region: '以色列', credibility: 'official', time: '2.5小時前', source: '以色列衛生部', url: 'https://www.gov.il/en/',
+  { type: 'alert', category: 'humanitarian', region: '以色列', credibility: 'official', time: '2.5小時前', source: '以色列衛生部',
+    url: 'https://www.gov.il/en/departments/ministry_of_health/govil-landing-page',
     title: '特拉維夫已有逾30萬市民疏散至南部避難所，醫院啟動戰時應急程序',
     summary: '以色列政府宣布特拉維夫大都會區進入最高戒備狀態，命令距伊朗飛彈攻擊半徑內的30萬居民疏散。各大醫院啟動「大規模傷亡應急計畫」，緊急召回休假醫護人員並清空病床。邊界附近社區的50萬居民接獲疏散通知。以色列教育部宣布全國學校停課，要求學生留在防空設施附近。Red Magen David（以色列紅十字會相當機構）呼籲市民保持冷靜。' },
 
-  { type: 'normal', category: 'military', region: '伊朗', credibility: 'unofficial', time: '3小時前', source: 'X / 社群媒體', url: 'https://x.com/search?q=Iran+attack',
+  { type: 'normal', category: 'military', region: '伊朗', credibility: 'unofficial', time: '3小時前', source: 'Iran International',
+    url: 'https://www.iranintl.com/en/iran',
     title: '伊朗境內社群媒體流傳德黑蘭市區爆炸畫面，官方尚未確認',
     summary: '多個伊朗境內社群媒體帳號上傳疑似德黑蘭市區遭到攻擊的影像，顯示至少3處地點出現爆炸及火光。伊朗官方媒體對此保持沉默，革命衛隊發言人亦未回應提問。部分影片地理位置辨識顯示爆炸地點可能接近德黑蘭軍事基地，但無法獨立核實。此類來自社群媒體的未經驗證訊息應謹慎對待，建議等待官方說明。' },
 
-  { type: 'normal', category: 'military', region: '伊朗', credibility: 'official', time: '3.5小時前', source: 'BBC News', url: 'https://www.bbc.com/news/world/middle_east',
+  { type: 'normal', category: 'military', region: '伊朗', credibility: 'official', time: '3.5小時前', source: 'BBC News',
+    url: 'https://www.bbc.com/news/topics/c2vdnvyt2ppt/iran-nuclear-programme',
     title: '以色列宣稱已摧毀伊朗Fordow地下核設施入口，伊方否認',
     summary: '以色列軍事情報官員對外宣稱，使用美國提供的GBU-57「巨型穿地彈」炸毀Fordow地下核設施主要入口及通風系統，有效使該設施「至少三年」無法運作。伊朗方面斷然否認，稱Fordow設施建於山體內逾80公尺深處，現有武器無法穿透。獨立軍事分析師表示，Fordow設施實際損毀程度難以從外部核實，衛星圖像分析預計需要數日。' },
 
-  { type: 'alert', category: 'travel', region: '以色列', credibility: 'official', time: '4小時前', source: '中華民國外交部', url: 'https://www.mofa.gov.tw/',
+  { type: 'alert', category: 'travel', region: '以色列', credibility: 'official', time: '4小時前', source: '中華民國外交部',
+    url: 'https://www.boca.gov.tw/sp-trwa-list-1.html',
     title: '台灣外交部發布伊朗、以色列旅遊警示升至第三級：警告勿前往',
     summary: '中華民國外交部領事事務局宣布，即日起將以色列及伊朗旅遊警示由第二級（提高警覺）升至第三級（警告勿前往）。外交部呼籲滯留當地台灣公民儘速撤離，並開設24小時緊急聯絡專線。據悉目前仍有約120名台灣公民在以色列境內，外交部正透過駐以代表處協助安排緊急撤離班機。伊朗境內台灣人數量較少，約有15名商務人士需要協助。' },
 
-  { type: 'normal', category: 'military', region: '伊朗', credibility: 'unofficial', time: '5小時前', source: '匿名消息 / Telegram', url: 'https://t.me/s/iranintl',
+  { type: 'normal', category: 'military', region: '伊朗', credibility: 'unofficial', time: '5小時前', source: 'Iran International',
+    url: 'https://www.iranintl.com/en/iran/military',
     title: '匿名伊朗軍方消息人士稱德黑蘭已準備第二波飛彈報復，未獲官方證實',
     summary: '伊朗反對派媒體「伊朗國際」引述匿名伊朗革命衛隊消息人士，聲稱德黑蘭已準備好「第二波」更大規模的飛彈攻擊，目標將擴及以色列核電廠及重要基礎設施。此消息目前無法獨立核實，伊朗政府官方媒體未有相關報導。分析人士指出，此類「預告性威脅」可能旨在心理戰術，迫使以色列分散防空資源。建議持保留態度，等待可信官方消息來源確認。' },
 
-  { type: 'normal', category: 'military', region: '黎巴嫩', credibility: 'official', time: '5.5小時前', source: 'Al Jazeera', url: 'https://www.aljazeera.com/tag/hezbollah/',
+  { type: 'normal', category: 'military', region: '黎巴嫩', credibility: 'official', time: '5.5小時前', source: 'Al Jazeera',
+    url: 'https://www.aljazeera.com/tag/hezbollah/',
     title: '黎巴嫩真主黨宣布對以色列北部發射火箭彈，響應伊朗',
     summary: '黎巴嫩真主黨發表聲明，宣布向以色列北部城市海法及拿撒勒方向發射逾200枚火箭彈，稱此為「響應伊朗兄弟的抵抗行動」。以色列北方司令部確認偵測到攻擊並啟動防空系統，上加利利及戈蘭高地居民已進入防空洞。黎巴嫩南部與以色列邊境再現2023年停火前的緊張局面，聯合國黎巴嫩臨時部隊（UNIFIL）呼籲各方立即停火並保護平民。' },
 
-  { type: 'normal', category: 'military', region: '加薩', credibility: 'official', time: '6小時前', source: 'Reuters', url: 'https://www.reuters.com/world/middle-east/',
+  { type: 'normal', category: 'military', region: '加薩', credibility: 'official', time: '6小時前', source: 'Reuters',
+    url: 'https://www.reuters.com/site-search/?query=Gaza+Hamas+ground+offensive',
     title: '加薩地面衝突持續，哈馬斯趁以伊戰爭宣稱發動新一輪攻勢',
     summary: '哈馬斯軍事部門宣布趁以色列軍隊調兵應對伊朗威脅之際，在加薩北部發動反攻，聲稱重新奪回部分建築及街道。以色列國防軍（IDF）確認加薩城附近有交火，但否認哈馬斯取得重大突破。加薩衛生部報告過去24小時有27名平民在持續空炸中死亡。人道組織警告，以伊戰爭引發國際注意力轉移，可能使加薩人道物資供應更加艱難。' },
 
-  { type: 'normal', category: 'humanitarian', region: '伊朗', credibility: 'official', time: '8小時前', source: 'UN 聯合國', url: 'https://www.un.org/',
+  { type: 'normal', category: 'humanitarian', region: '伊朗', credibility: 'official', time: '8小時前', source: 'UN Security Council',
+    url: 'https://www.un.org/securitycouncil/content/resolutions-adopted-security-council',
     title: '聯合國安理會緊急召開會議討論以伊戰爭，美英投票否決停火決議',
     summary: '聯合國安理會召開緊急特別會議，中國及俄羅斯提交要求以色列及伊朗「立即停止一切軍事行動」的決議草案，並以12票贊成、2票棄權通過。然而美國及英國行使否決權，決議未能通過。聯合國秘書長呼籲雙方克制，表達對核設施可能受損引發輻射危機的深切憂慮。約旦、埃及、土耳其等阿拉伯國家聯合聲明要求立即停火，並召回駐以色列大使表達抗議。' },
 
-  { type: 'normal', category: 'aviation', region: '伊朗', credibility: 'official', time: '9小時前', source: 'Bloomberg', url: 'https://www.bloomberg.com/energy',
+  { type: 'normal', category: 'aviation', region: '伊朗', credibility: 'official', time: '9小時前', source: 'Bloomberg',
+    url: 'https://www.bloomberg.com/energy?query=Iran+Hormuz+oil',
     title: '中東石油價格急升18%，市場擔憂荷姆茲海峽遭封鎖',
     summary: '國際油價在以伊衝突全面升級後急漲，布蘭特原油突破每桶120美元大關，為近四年來新高。市場最大擔憂在於伊朗可能封鎖荷姆茲海峽，每日約1,800萬桶石油（占全球供應量20%）途經此地。沙烏地阿拉伯及阿聯酋宣稱海峽目前仍然暢通，並表示已提高石油產量以穩定市場。分析師警告，若衝突持續，石油價格可能進一步攀升至每桶140-150美元。' },
 
-  { type: 'normal', category: 'military', region: '伊拉克', credibility: 'official', time: '11小時前', source: 'Reuters', url: 'https://www.reuters.com/world/middle-east/',
+  { type: 'normal', category: 'military', region: '伊拉克', credibility: 'official', time: '11小時前', source: 'Reuters',
+    url: 'https://www.reuters.com/site-search/?query=Iraq+militia+drone+US+base',
     title: '伊拉克親伊朗民兵宣布「加入戰鬥」，向美軍基地發射無人機',
     summary: '伊拉克境內親伊朗武裝組織「伊斯蘭抵抗運動」宣布正式加入以伊衝突，向駐伊拉克美軍艾因阿薩德及哈里里空軍基地發射多架自殺式無人機。美軍確認成功攔截大部分無人機，有少數造成輕微設施受損，無人員傷亡。美國國務院召見伊拉克大使，警告伊拉克政府須約束境內武裝民兵。此舉引發外界憂慮衝突可能進一步擴大至伊拉克境內，影響該區域美軍部署。' },
 ];
